@@ -176,28 +176,31 @@ export default function App() {
 
   const copy = COPY[lang];
 
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isValidEmail(email)) {
-      setStatus("error");
-      setMessage(lang === "es" ? "Introduce un email válido" : "Enter a valid email");
-      return;
-    }
-    setStatus("loading");
-    setTimeout(() => {
-      try {
-        const list = JSON.parse(localStorage.getItem("aurelia_waitlist") || "[]");
-        if (!list.includes(email)) list.push(email);
-        localStorage.setItem("aurelia_waitlist", JSON.stringify(list));
-        setStatus("success");
-        setMessage(lang === "es" ? "¡Gracias! Te avisaremos en el lanzamiento ✨" : "Thanks! We'll update you at launch ✨");
-        setEmail("");
-      } catch (e) {
-        setStatus("error");
-        setMessage(lang === "es" ? "Algo salió mal" : "Something went wrong");
-      }
-    }, 500);
-  };
+const handleSubscribe = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!/[^\s@]+@[^\s@]+\.[^\s@]+/.test(email)) {
+    setStatus("error");
+    setMessage("Enter a valid email");
+    return;
+  }
+  setStatus("loading");
+  try {
+    const res = await fetch("/api/subscribe", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.message || "Request failed");
+    setStatus("success");
+    setMessage("Thanks! We'll update you at launch ✨");
+    setEmail("");
+  } catch {
+    setStatus("error");
+    setMessage("Something went wrong");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-white text-zinc-800 relative overflow-hidden">
