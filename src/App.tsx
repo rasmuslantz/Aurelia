@@ -314,7 +314,9 @@ export default function App() {
       {/* helper keyframes + mobile clamp + button shine */}
       <style>{`
         @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-        @keyframes btn-shine{from{transform:translateX(-60%) rotate(12deg)} to{transform:translateX(180%) rotate(12deg)}}
+        @keyframes btn-shine{0%{transform:translateX(-140%) rotate(12deg)}100%{transform:translateX(240%) rotate(12deg)}}
+        .btnShine{animation:btn-shine 2.2s linear infinite}
+        @media (prefers-reduced-motion: reduce){.btnShine{animation:none!important}}
         @media (max-width:640px){ .trait-mobile{width:12ch !important; font-size:0.95rem} }
       `}</style>
 
@@ -337,9 +339,7 @@ export default function App() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <div className="hidden md:block text-sm text-zinc-600">
-              {copy.tagline}
-            </div>
+            <div className="hidden md:block text-sm text-zinc-600">{copy.tagline}</div>
             {/* Language picker */}
             <div className="inline-flex rounded-full ring-1 ring-rose-200 overflow-hidden">
               <button
@@ -383,11 +383,11 @@ export default function App() {
               </span>
             </h1>
 
-            {/* Description: smaller on mobile + keep trait on same line */}
+            {/* Description with trailing typewriter traits (kept on one line on mobile) */}
             <p className="mt-4 text-base sm:text-lg md:text-xl text-zinc-800">
               {copy.desc1}
               <span className="font-semibold">{copy.ai}</span>
-              <span className="whitespace-normal">{copy.desc2}</span>
+              {copy.desc2}
               <span className="whitespace-nowrap align-baseline">
                 <TypeTrait lang={lang} />
               </span>
@@ -425,10 +425,10 @@ export default function App() {
                       <Mail className="h-4 w-4" />{" "}
                       {status === "loading" ? copy.joining : copy.notify}
                     </span>
-                    {/* smooth CSS shine (mobile-safe) */}
+                    {/* smooth, full-width sweep (pure CSS) */}
                     <span
                       aria-hidden
-                      className="pointer-events-none absolute -inset-y-2 -left-1/3 w-1/3 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)] animate-[btn-shine_2.3s_linear_infinite]"
+                      className="btnShine pointer-events-none absolute -inset-y-2 -left-1/2 w-1/2 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)] transform-gpu will-change-transform"
                     />
                   </button>
                 </form>
