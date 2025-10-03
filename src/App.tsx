@@ -28,7 +28,7 @@ const COPY: Record<Lang, any> = {
     desc1: "Tell us a little about you. Our ",
     ai: "AI",
     desc2:
-      " analyzes what suits you and selects the piece made for you — matched to your ",
+      " analyzes what suits you and selects the piece made for you — matched to your",
     emailLabel: "Email address",
     emailPlaceholder: "Your email",
     notify: "Notify me",
@@ -44,6 +44,9 @@ const COPY: Record<Lang, any> = {
     en: "EN",
     es: "ES",
     footerLine: "Privacy-first · Ethical sourcing",
+    invalid: "Enter a valid email",
+    thanks: "Thanks! We'll update you at launch ✨",
+    error: "Something went wrong",
   },
   es: {
     tagline: "Joyería elegida para ti — con IA",
@@ -52,7 +55,7 @@ const COPY: Record<Lang, any> = {
     desc1: "Cuéntanos un poco sobre ti. Nuestra ",
     ai: "IA",
     desc2:
-      " analiza lo que te favorece y te recomienda la pieza hecha para ti — en función de tu ",
+      " analiza lo que te favorece y te recomienda la pieza hecha para ti — alineada con tu",
     emailLabel: "Correo electrónico",
     emailPlaceholder: "Tu email",
     notify: "Avísame",
@@ -68,6 +71,9 @@ const COPY: Record<Lang, any> = {
     en: "EN",
     es: "ES",
     footerLine: "Privacidad primero · Abastecimiento ético",
+    invalid: "Introduce un email válido",
+    thanks: "¡Gracias! Te avisaremos en el lanzamiento ✨",
+    error: "Algo salió mal",
   },
 };
 
@@ -149,7 +155,7 @@ const Sheen = () => (
   </motion.div>
 );
 
-/** Typewriter rotating traits (fixed width; mobile clamp) */
+/** Typewriter rotating traits (fixed width; remount on lang; no-wrap with previous word) */
 const TypeTrait = ({ lang }: { lang: Lang }) => {
   const traits = useMemo(
     () =>
@@ -182,16 +188,26 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
           ],
     [lang]
   );
+
   const [i, setI] = useState(0);
   const [sub, setSub] = useState(0);
   const [del, setDel] = useState(false);
   const [blink, setBlink] = useState(true);
 
+  // Reset animation cleanly when language changes
+  useEffect(() => {
+    setI(0);
+    setSub(0);
+    setDel(false);
+  }, [lang]);
+
+  // caret blink
   useEffect(() => {
     const id = setInterval(() => setBlink((b) => !b), 520);
     return () => clearInterval(id);
   }, []);
 
+  // typing cycle
   useEffect(() => {
     const word = traits[i];
     if (!del && sub === word.length) {
@@ -207,6 +223,7 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
     return () => clearTimeout(t);
   }, [sub, del, i, traits]);
 
+  // width in "ch" (character units) to avoid layout shift
   const longest = useMemo(
     () => traits.reduce((m, s) => Math.max(m, s.length), 0),
     [traits]
@@ -215,7 +232,7 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
   return (
     <span className="inline-flex items-end align-baseline h-8">
       <span
-        className="relative inline-block leading-8 font-medium tracking-wide trait-mobile"
+        className="relative inline-block leading-8 font-medium tracking-wide flex-shrink-0"
         style={{ width: `${longest}ch` }}
         aria-live="polite"
       >
@@ -284,7 +301,7 @@ export default function App() {
     e.preventDefault();
     if (!isValidEmail(email)) {
       setStatus("error");
-      setMessage(lang === "es" ? "Introduce un email válido" : "Enter a valid email");
+      setMessage(copy.invalid);
       return;
     }
     setStatus("loading");
@@ -297,15 +314,11 @@ export default function App() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error(data.message || "Request failed");
       setStatus("success");
-      setMessage(
-        lang === "es"
-          ? "¡Gracias! Te avisaremos en el lanzamiento ✨"
-          : "Thanks! We'll update you at launch ✨"
-      );
+      setMessage(copy.thanks);
       setEmail("");
     } catch {
       setStatus("error");
-      setMessage(lang === "es" ? "Algo salió mal" : "Something went wrong");
+      setMessage(copy.error);
     }
   };
 
@@ -317,7 +330,12 @@ export default function App() {
         @keyframes btn-shine{0%{transform:translateX(-140%) rotate(12deg)}100%{transform:translateX(240%) rotate(12deg)}}
         .btnShine{animation:btn-shine 2.2s linear infinite}
         @media (prefers-reduced-motion: reduce){.btnShine{animation:none!important}}
-        @media (max-width:640px){ .trait-mobile{width:12ch !important; font-size:0.95rem} }
+        /* keep the final words + trait together on one line (even ES) */
+        .nowrapTail{ white-space: nowrap; }
+        /* slightly tighter on small screens so the whole bit fits neatly */
+        @media (max-width:640px){
+          .descSize{ font-size: 0.95rem; }
+        }
       `}</style>
 
       {/* ambient glows */}
@@ -383,13 +401,16 @@ export default function App() {
               </span>
             </h1>
 
-            {/* Description with trailing typewriter traits (kept on one line on mobile) */}
-            <p className="mt-4 text-base sm:text-lg md:text-xl text-zinc-800">
+            {/* Description with trailing typewriter traits */}
+            <p className="mt-4 descSize sm:text-lg md:text-xl text-zinc-800">
               {copy.desc1}
               <span className="font-semibold">{copy.ai}</span>
               {copy.desc2}
-              <span className="whitespace-nowrap align-baseline">
-                <TypeTrait lang={lang} />
+              {/* NBSP + nowrap keeps the keyword with the preceding word on the SAME line */}
+              <span className="nowrapTail">
+                {"\u00A0"}
+                {/* key={lang} forces a clean remount so animation never freezes on toggle */}
+                <TypeTrait key={lang} lang={lang} />
               </span>
             </p>
 
