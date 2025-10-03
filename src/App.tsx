@@ -1,13 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Input } from "@/components/ui/input";
 import { Mail, Sparkles, ClipboardList, Wand2, Gem } from "lucide-react";
 
-// ---- Typography ----
-// <link rel="preconnect" href="https://fonts.googleapis.com" />
-// <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-// <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
+/** Simple email validator */
 const isValidEmail = (email: string) => /[^\s@]+@[^\s@]+\.[^\s@]+/.test(String(email).toLowerCase());
 
 type Lang = "en" | "es";
@@ -34,6 +29,7 @@ const COPY: Record<Lang, any> = {
     langLabel: "Language",
     en: "EN",
     es: "ES",
+    footerLine: "Privacy‑first · Ethical sourcing",
   },
   es: {
     tagline: "Joyería elegida para ti — con IA",
@@ -49,17 +45,18 @@ const COPY: Record<Lang, any> = {
     subscribeIdle: "Suscríbete para enterarte cuando lancemos",
     step1Title: "Mini test",
     step1Desc: "Unos toques para captar tu gusto.",
-    step2Title: "Mejor coincidencia",
+    step2Title: "Coincidencia con IA",
     step2Desc: "Analizamos y curamos una cápsula precisa.",
     step3Title: "Tu pieza",
     step3Desc: "Descubre la pieza que se siente como tú.",
     langLabel: "Idioma",
     en: "EN",
     es: "ES",
+    footerLine: "Privacidad primero · Abastecimiento ético",
   },
 };
 
-// Crystal-drop logo with liquid-glass glint
+/** Liquid-glass crystal drop logo */
 const AureliaLogo = () => (
   <motion.div
     whileHover={{ rotate: -2, scale: 1.02 }}
@@ -94,51 +91,26 @@ const AureliaLogo = () => (
   </motion.div>
 );
 
-// Floating sparkles
-const FloatingSparkle = ({ className = "" }) => (
+/** Floating sparkles */
+const FloatingSparkle = ({ className = "" }: { className?: string }) => (
   <motion.div className={"absolute " + className} initial={{ opacity: 0, y: 8, scale: 0.9 }} animate={{ opacity: [0, 0.7, 0], y: [-6, 3, -6], scale: [0.9, 1, 0.95] }} transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}>
     <Sparkles className="w-3.5 h-3.5 text-rose-500/80" />
   </motion.div>
 );
 
-// Hero sheen
+/** Gentle hero sheen */
 const Sheen = () => (
   <motion.div className="pointer-events-none absolute -top-10 left-0 right-0 h-24" initial={{ opacity: 0 }} animate={{ opacity: [0, 0.35, 0] }} transition={{ duration: 7, repeat: Infinity }}>
     <motion.div className="absolute -left-40 h-24 w-80 rotate-6 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.7)_50%,rgba(255,255,255,0)_100%)]" initial={{ x: -200 }} animate={{ x: 1200 }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} />
   </motion.div>
 );
 
-// Keyword typewriter at sentence end (no box, fixed width, gradient text, ending dot)
+/** Typewriter rotating traits (ends with a dot, fixed width to avoid layout shift) */
 const TypeTrait = ({ lang }: { lang: Lang }) => {
   const traits = useMemo(
-    () =>
-      lang === "es"
-        ? [
-            "personalidad.",
-            "astrología.",
-            "estilo.",
-            "aspecto.",
-            "vibra.",
-            "estado de ánimo.",
-            "aura.",
-            "forma del rostro.",
-            "tono de piel.",
-            "ocasión.",
-            "energía.",
-          ]
-        : [
-            "personality.",
-            "astrology.",
-            "style.",
-            "looks.",
-            "vibe.",
-            "mood.",
-            "aura.",
-            "face shape.",
-            "skin tone.",
-            "occasion.",
-            "energy.",
-          ],
+    () => (lang === "es" 
+      ? ["personalidad.", "astrología.", "estilo.", "aspecto.", "vibra.", "estado de ánimo.", "aura.", "forma del rostro.", "tono de piel.", "ocasión.", "energía."]
+      : ["personality.", "astrology.", "style.", "looks.", "vibe.", "mood.", "aura.", "face shape.", "skin tone.", "occasion.", "energy."]),
     [lang]
   );
   const [i, setI] = useState(0);
@@ -170,11 +142,7 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
 
   return (
     <span className="inline-flex items-end align-baseline h-8">
-      <span
-        className="relative inline-block leading-8 font-medium tracking-wide"
-        style={{ width: `${longest}ch` }}
-        aria-live="polite"
-      >
+      <span className="relative inline-block leading-8 font-medium tracking-wide" style={{ width: `${longest}ch` }} aria-live="polite">
         <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#c5a24a,#c44e84,#2f6fbf,#c5a24a)] bg-[length:220%_100%] animate-[shimmer_8s_linear_infinite]">
           {traits[i].substring(0, sub)}
         </span>
@@ -184,7 +152,7 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
   );
 };
 
-// Visual, mobile-first mini stepper with small illustrations
+/** Visual, mobile-first step cards */
 const Step = ({ no, icon, title, desc }: { no: string; icon: React.ReactNode; title: string; desc: string }) => (
   <div className="relative flex items-start gap-3 p-4 rounded-2xl ring-1 ring-rose-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
     <div className="relative shrink-0">
@@ -200,7 +168,7 @@ const Step = ({ no, icon, title, desc }: { no: string; icon: React.ReactNode; ti
   </div>
 );
 
-export default function Landing() {
+export default function App() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -247,28 +215,18 @@ export default function Landing() {
         <div className="mx-auto max-w-6xl px-6 py-6 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <AureliaLogo />
-            <span className="text-xl font-medium tracking-wide [font-family:'Cormorant_Garamond',ui-serif] text-zinc-900">Aurelia</span>
+            <span className="text-xl font-medium tracking-wide font-serif text-zinc-900">Aurelia</span>
           </div>
           <div className="flex items-center gap-4">
-            <div className="hidden md:block text-sm text-zinc-600 [font-family:'Inter',ui-sans-serif]">{copy.tagline}</div>
+            <div className="hidden md:block text-sm text-zinc-600">{copy.tagline}</div>
             {/* Language picker */}
             <div className="inline-flex items-center gap-2">
               <span className="sr-only">{copy.langLabel}</span>
               <div className="inline-flex rounded-full ring-1 ring-rose-200 overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setLang("en")}
-                  className={`px-3 h-8 text-xs ${lang === 'en' ? 'bg-rose-100 text-rose-700' : 'text-zinc-600 hover:text-zinc-800'}`}
-                  aria-pressed={lang === 'en'}
-                >
+                <button type="button" onClick={() => setLang("en")} className={`px-3 h-8 text-xs ${lang === 'en' ? 'bg-rose-100 text-rose-700' : 'text-zinc-600 hover:text-zinc-800'}`} aria-pressed={lang === 'en'}>
                   {copy.en}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setLang("es")}
-                  className={`px-3 h-8 text-xs ${lang === 'es' ? 'bg-rose-100 text-rose-700' : 'text-zinc-600 hover:text-zinc-800'}`}
-                  aria-pressed={lang === 'es'}
-                >
+                <button type="button" onClick={() => setLang("es")} className={`px-3 h-8 text-xs ${lang === 'es' ? 'bg-rose-100 text-rose-700' : 'text-zinc-600 hover:text-zinc-800'}`} aria-pressed={lang === 'es'}>
                   {copy.es}
                 </button>
               </div>
@@ -282,30 +240,24 @@ export default function Landing() {
         <section className="mx-auto max-w-6xl px-6 pt-8 pb-20 md:pt-16 md:pb-28">
           <div className="relative max-w-3xl">
             <Sheen />
-            <h1 className="text-4xl md:text-6xl leading-tight font-serif [font-family:'Cormorant_Garamond',ui-serif,Georgia,serif] text-zinc-900">
+            <h1 className="text-4xl md:text-6xl leading-tight font-serif text-zinc-900">
               {copy.heroLead}
-              <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#c5a24a,#c44e84,#2f6fbf,#c5a24a)] bg-[length:220%_100%] animate-[shimmer_6s_linear_infinite]">
-                {copy.heroSpan}
-              </span>
+              <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#c5a24a,#c44e84,#2f6fbf,#c5a24a)] bg-[length:220%_100%] animate-[shimmer_6s_linear_infinite]">{copy.heroSpan}</span>
             </h1>
-            <style>{`@keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}`}</style>
 
-            {/* AI-forward description with trailing typewriter trait (no enumeration) */}
-            <p className="mt-4 text-lg md:text-xl text-zinc-800 [font-family:'Inter',ui-sans-serif,system-ui]">
-              {copy.desc1}
-              <span className="font-semibold">{copy.ai}</span>
-              {copy.desc2}
-              <TypeTrait lang={lang} />
+            {/* Description with trailing typewriter traits */}
+            <p className="mt-4 text-lg md:text-xl text-zinc-800">
+              {copy.desc1}<span className="font-semibold">{copy.ai}</span>{copy.desc2}<TypeTrait lang={lang} />
             </p>
 
             {/* Signup */}
             <div className="mt-8 relative">
               <div className="absolute -inset-[1px] rounded-2xl bg-[linear-gradient(135deg,rgba(197,162,74,.35),rgba(255,255,255,.6),rgba(47,111,191,.35))] opacity-60 blur-[2px]" />
               <div className="relative rounded-2xl bg-white/60 backdrop-blur-xl ring-1 ring-white/60 shadow-sm">
-                <form onSubmit={handleSubscribe} className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4 [font-family:'Inter',ui-sans-serif,system-ui]">
+                <form onSubmit={handleSubscribe} className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <div className="sm:flex-1">
                     <label htmlFor="email" className="sr-only">{copy.emailLabel}</label>
-                    <Input id="email" type="email" autoComplete="email" placeholder={copy.emailPlaceholder} value={email} onChange={(e) => setEmail(e.target.value)} className="h-12 rounded-full bg-white/90 border-zinc-200 focus-visible:ring-rose-400 placeholder:text-zinc-400" aria-invalid={status === 'error'} />
+                    <input id="email" type="email" autoComplete="email" placeholder={copy.emailPlaceholder} value={email} onChange={(e) => setEmail(e.target.value)} className="h-12 w-full rounded-full bg-white/90 border border-zinc-200 px-4 focus:outline-none focus:ring-2 focus:ring-rose-400 placeholder:text-zinc-400" aria-invalid={status === 'error'} />
                   </div>
                   <button type="submit" disabled={status === 'loading'} className="relative h-12 rounded-full px-6 sm:px-7 overflow-hidden bg-white text-zinc-900 ring-1 ring-rose-300 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed">
                     <span className="inline-flex items-center gap-2 text-sm font-medium">
@@ -314,7 +266,7 @@ export default function Landing() {
                     <motion.span className="pointer-events-none absolute -inset-y-1 -left-24 w-24 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)]" initial={{ x: -120 }} animate={{ x: 260 }} transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.2 }} />
                   </button>
                 </form>
-                <div className="px-4 pb-4 -mt-2 min-h-[1.25rem] text-sm [font-family:'Inter',ui-sans-serif,system-ui]">
+                <div className="px-4 pb-4 -mt-2 min-h-[1.25rem] text-sm">
                   {status === 'error' && <p className="text-rose-600">{message}</p>}
                   {status === 'success' && <p className="text-emerald-600">{message}</p>}
                   {status === 'idle' && <p className="text-rose-600">{copy.subscribeIdle}</p>}
@@ -322,16 +274,13 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Visual mini stepper: mobile-first illustrated */}
+            {/* Visual stepper */}
             <div aria-label="How it works" className="mt-8">
               <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 items-stretch">
-                {/* 1 — Quick quiz */}
                 <Step no="1" icon={<ClipboardList className="w-5 h-5 text-rose-600" />} title={copy.step1Title} desc={copy.step1Desc} />
                 <div className="hidden md:flex items-center justify-center text-zinc-400 select-none">→</div>
-                {/* 2 — AI match */}
                 <Step no="2" icon={<Wand2 className="w-5 h-5 text-rose-600" />} title={copy.step2Title} desc={copy.step2Desc} />
                 <div className="hidden md:flex items-center justify-center text-zinc-400 select-none">→</div>
-                {/* 3 — Your piece */}
                 <Step no="3" icon={<Gem className="w-5 h-5 text-rose-600" />} title={copy.step3Title} desc={copy.step3Desc} />
               </div>
             </div>
@@ -341,9 +290,14 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-zinc-100">
-        <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500 [font-family:'Inter',ui-sans-serif,system-ui]">
-          <div className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-rose-500" /><span>© {new Date().getFullYear()} Aurelia</span></div>
-          <div className="inline-flex items-center gap-6"><span>Privacy‑first · Ethical sourcing</span></div>
+        <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-rose-500" />
+            <span>© {new Date().getFullYear()} Aurelia</span>
+          </div>
+          <div className="inline-flex items-center gap-6">
+            <span>{copy.footerLine}</span>
+          </div>
         </div>
       </footer>
     </div>
