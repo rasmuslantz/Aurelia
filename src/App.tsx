@@ -107,12 +107,7 @@ const AureliaLogo = () => (
           fill="url(#gloss)"
           initial={{ x: -96 }}
           animate={{ x: 128 }}
-          transition={{
-            duration: 3.6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            repeatDelay: 1.2,
-          }}
+          transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.2 }}
         />
       </g>
       <path
@@ -154,7 +149,7 @@ const Sheen = () => (
   </motion.div>
 );
 
-/** Typewriter rotating traits (ends with a dot, fixed width to avoid layout shift) */
+/** Typewriter rotating traits (fixed width; mobile clamp) */
 const TypeTrait = ({ lang }: { lang: Lang }) => {
   const traits = useMemo(
     () =>
@@ -220,7 +215,7 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
   return (
     <span className="inline-flex items-end align-baseline h-8">
       <span
-        className="relative inline-block leading-8 font-medium tracking-wide"
+        className="relative inline-block leading-8 font-medium tracking-wide trait-mobile"
         style={{ width: `${longest}ch` }}
         aria-live="polite"
       >
@@ -316,6 +311,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white text-zinc-800 relative overflow-hidden">
+      {/* helper keyframes + mobile clamp + button shine */}
+      <style>{`
+        @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        @keyframes btn-shine{from{transform:translateX(-60%) rotate(12deg)} to{transform:translateX(180%) rotate(12deg)}}
+        @media (max-width:640px){ .trait-mobile{width:12ch !important; font-size:0.95rem} }
+      `}</style>
+
       {/* ambient glows */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 -right-40 h-[36rem] w-[36rem] rounded-full blur-3xl opacity-50 bg-[radial-gradient(circle_at_30%_30%,#e9f3ff_0%,#fff_60%)]" />
@@ -339,34 +341,31 @@ export default function App() {
               {copy.tagline}
             </div>
             {/* Language picker */}
-            <div className="inline-flex items-center gap-2">
-              <span className="sr-only">{copy.langLabel}</span>
-              <div className="inline-flex rounded-full ring-1 ring-rose-200 overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setLang("en")}
-                  className={`px-3 h-8 text-xs ${
-                    lang === "en"
-                      ? "bg-rose-100 text-rose-700"
-                      : "text-zinc-600 hover:text-zinc-800"
-                  }`}
-                  aria-pressed={lang === "en"}
-                >
-                  {copy.en}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLang("es")}
-                  className={`px-3 h-8 text-xs ${
-                    lang === "es"
-                      ? "bg-rose-100 text-rose-700"
-                      : "text-zinc-600 hover:text-zinc-800"
-                  }`}
-                  aria-pressed={lang === "es"}
-                >
-                  {copy.es}
-                </button>
-              </div>
+            <div className="inline-flex rounded-full ring-1 ring-rose-200 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setLang("en")}
+                className={`px-3 h-8 text-xs ${
+                  lang === "en"
+                    ? "bg-rose-100 text-rose-700"
+                    : "text-zinc-600 hover:text-zinc-800"
+                }`}
+                aria-pressed={lang === "en"}
+              >
+                {copy.en}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang("es")}
+                className={`px-3 h-8 text-xs ${
+                  lang === "es"
+                    ? "bg-rose-100 text-rose-700"
+                    : "text-zinc-600 hover:text-zinc-800"
+                }`}
+                aria-pressed={lang === "es"}
+              >
+                {copy.es}
+              </button>
             </div>
           </div>
         </div>
@@ -384,12 +383,14 @@ export default function App() {
               </span>
             </h1>
 
-            {/* Description with trailing typewriter traits */}
-            <p className="mt-4 text-lg md:text-xl text-zinc-800">
+            {/* Description: smaller on mobile + keep trait on same line */}
+            <p className="mt-4 text-base sm:text-lg md:text-xl text-zinc-800">
               {copy.desc1}
               <span className="font-semibold">{copy.ai}</span>
-              {copy.desc2}
-              <TypeTrait lang={lang} />
+              <span className="whitespace-normal">{copy.desc2}</span>
+              <span className="whitespace-nowrap align-baseline">
+                <TypeTrait lang={lang} />
+              </span>
             </p>
 
             {/* Signup */}
@@ -424,16 +425,10 @@ export default function App() {
                       <Mail className="h-4 w-4" />{" "}
                       {status === "loading" ? copy.joining : copy.notify}
                     </span>
-                    <motion.span
-                      className="pointer-events-none absolute -inset-y-1 -left-24 w-24 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)]"
-                      initial={{ x: -120 }}
-                      animate={{ x: 260 }}
-                      transition={{
-                        duration: 2.6,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        repeatDelay: 1.2,
-                      }}
+                    {/* smooth CSS shine (mobile-safe) */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute -inset-y-2 -left-1/3 w-1/3 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)] animate-[btn-shine_2.3s_linear_infinite]"
                     />
                   </button>
                 </form>
@@ -445,7 +440,7 @@ export default function App() {
                     <p className="text-emerald-600">{message}</p>
                   )}
                   {status === "idle" && (
-                    <p className="text-rose-600">{copy.subscribeIdle}</p>
+                    <p className="text-zinc-500">{copy.subscribeIdle}</p>
                   )}
                 </div>
               </div>
