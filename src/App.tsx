@@ -9,7 +9,7 @@ const isValidEmail = (email: string) =>
 
 type Lang = "en" | "es";
 
-/** Detect initial language (saved choice > browser lang) */
+/** Detect initial language (saved choice > browser) */
 const getInitialLang = (): Lang => {
   if (typeof window === "undefined") return "en";
   const saved = localStorage.getItem("aurelia_lang");
@@ -80,6 +80,8 @@ const COPY: Record<Lang, any> = {
   },
 };
 
+/** ——— Visual bits ——— */
+
 /** Liquid-glass crystal drop logo */
 const AureliaLogo = () => (
   <motion.div
@@ -90,9 +92,9 @@ const AureliaLogo = () => (
     <svg viewBox="0 0 64 64" className="absolute inset-0 h-full w-full">
       <defs>
         <linearGradient id="crystal" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#d7b85a" />
-          <stop offset="50%" stopColor="#eaa1c4" />
-          <stop offset="100%" stopColor="#9ec7ff" />
+          <stop offset="0%" stopColor="#e7c873" />
+          <stop offset="50%" stopColor="#f6dce5" />
+          <stop offset="100%" stopColor="#cfe9ff" />
         </linearGradient>
         <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#ffffff" stopOpacity=".0" />
@@ -105,9 +107,9 @@ const AureliaLogo = () => (
       </defs>
       <g clipPath="url(#drop)">
         <rect x="0" y="0" width="64" height="64" fill="url(#crystal)" />
-        <polygon points="32,10 44,26 32,34 20,26" fill="#ffffff" fillOpacity=".18" />
-        <polygon points="20,26 32,34 26,48 16,34" fill="#ffffff" fillOpacity=".12" />
-        <polygon points="44,26 32,34 38,48 48,34" fill="#ffffff" fillOpacity=".12" />
+        <polygon points="32,10 44,26 32,34 20,26" fill="#fff" fillOpacity=".18" />
+        <polygon points="20,26 32,34 26,48 16,34" fill="#fff" fillOpacity=".12" />
+        <polygon points="44,26 32,34 38,48 48,34" fill="#fff" fillOpacity=".12" />
         <motion.rect
           x="-96"
           y="0"
@@ -119,17 +121,12 @@ const AureliaLogo = () => (
           transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.2 }}
         />
       </g>
-      <path
-        d="M32 6 C38 14, 46 22, 50 31 C54 40, 48 54, 32 58 C16 54, 10 40, 14 31 C18 22, 26 14, 32 6 Z"
-        fill="none"
-        stroke="#ffffff"
-        strokeOpacity=".7"
-      />
+      <path d="M32 6 C38 14, 46 22, 50 31 C54 40, 48 54, 32 58 C16 54, 10 40, 14 31 C18 22, 26 14, 32 6 Z" fill="none" stroke="#fff" strokeOpacity=".7" />
     </svg>
   </motion.div>
 );
 
-/** Floating sparkles */
+/** Background sparkles */
 const FloatingSparkle = ({ className = "" }: { className?: string }) => (
   <motion.div
     className={"absolute " + className}
@@ -158,7 +155,19 @@ const Sheen = () => (
   </motion.div>
 );
 
-/** Typewriter rotating traits (fixed width; remount on lang; keep on same line) */
+/** Champagne shimmer for the headline span */
+const ShimmerText = ({ children }: { children: React.ReactNode }) => (
+  <motion.span
+    className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#e7c873,#f1b2c6,#cfe9ff,#e7c873)] bg-[length:200%_100%]"
+    initial={{ backgroundPositionX: "0%" }}
+    animate={{ backgroundPositionX: ["0%", "100%", "0%"] }}
+    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+  >
+    {children}
+  </motion.span>
+);
+
+/** Rotating keyword (fixed width; remount on lang; kept on same line) */
 const TypeTrait = ({ lang }: { lang: Lang }) => {
   const traits = useMemo(
     () =>
@@ -197,8 +206,11 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
   const [del, setDel] = useState(false);
   const [blink, setBlink] = useState(true);
 
+  // reset cleanly on lang change
   useEffect(() => {
-    setI(0); setSub(0); setDel(false);
+    setI(0);
+    setSub(0);
+    setDel(false);
   }, [lang]);
 
   useEffect(() => {
@@ -213,7 +225,8 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
       return () => clearTimeout(hold);
     }
     if (del && sub === 0) {
-      setDel(false); setI((i + 1) % traits.length);
+      setDel(false);
+      setI((i + 1) % traits.length);
       return;
     }
     const t = setTimeout(() => setSub(sub + (del ? -1 : 1)), del ? 45 : 70);
@@ -240,6 +253,34 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
     </span>
   );
 };
+
+/** Step card */
+const Step = ({
+  no,
+  icon,
+  title,
+  desc,
+}: {
+  no: string;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+}) => (
+  <div className="relative flex items-start gap-3 p-4 rounded-2xl ring-1 ring-rose-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <div className="relative shrink-0">
+      <div className="h-12 w-12 grid place-items-center rounded-full bg-gradient-to-br from-rose-100 via-rose-200 to-amber-100 ring-1 ring-rose-200/70 shadow-sm">
+        {icon}
+      </div>
+      <span className="absolute -top-1 -left-1 h-5 w-5 rounded-full bg-white text-rose-600 ring-1 ring-rose-300 grid place-items-center text-[10px] font-semibold">
+        {no}
+      </span>
+    </div>
+    <div className="min-w-0">
+      <div className="text-base font-medium text-zinc-900">{title}</div>
+      <p className="text-xs text-zinc-600 leading-snug">{desc}</p>
+    </div>
+  </div>
+);
 
 export default function App() {
   const [email, setEmail] = useState("");
@@ -286,14 +327,18 @@ export default function App() {
     <div className="min-h-screen bg-white text-zinc-800 relative overflow-hidden">
       {/* helper keyframes + mobile clamp + button shine + caustics */}
       <style>{`
+        /* headline + trait shimmer */
         @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        /* button shine — smooth on mobile */
         @keyframes btn-shine{0%{transform:translateX(-140%) rotate(12deg)}100%{transform:translateX(240%) rotate(12deg)}}
-        .btnShine{animation:btn-shine 2.2s linear infinite}
+        .btnShine{animation:btn-shine 2.2s linear infinite; will-change: transform;}
         @media (prefers-reduced-motion: reduce){.btnShine{animation:none!important}}
+        /* keep the last word + trait on one line */
         .nowrapTail{ white-space: nowrap; }
+        /* slightly tighter on small screens */
         @media (max-width:640px){ .descSize{ font-size: 0.95rem; } }
 
-        /* soft animated caustics overlay */
+        /* animated caustics over the video */
         @keyframes causticFlow {
           0% { background-position: 0% 0%, 100% 100%; }
           50% { background-position: 100% 0%, 0% 100%; }
@@ -302,10 +347,11 @@ export default function App() {
         .caustics {
           background-image:
             radial-gradient(60% 40% at 20% 30%, rgba(255,255,255,0.35), transparent 60%),
-            radial-gradient(50% 35% at 80% 70%, rgba(197,162,74,0.25), transparent 60%);
+            radial-gradient(50% 35% at 80% 70%, rgba(231,200,115,0.25), transparent 60%);
           background-size: 160% 160%, 140% 140%;
           animation: causticFlow 12s ease-in-out infinite;
-          mix-blend: soft-light;
+          mix-blend-mode: soft-light;
+          pointer-events: none;
         }
       `}</style>
 
@@ -323,15 +369,28 @@ export default function App() {
         <div className="mx-auto max-w-6xl px-6 py-6 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <AureliaLogo />
-            <span className="text-xl font-medium tracking-wide font-serif text-zinc-900">Aurelia</span>
+            <span className="text-xl font-medium tracking-wide [font-family:'Cormorant_Garamond',ui-serif] text-zinc-900">
+              Aurelia
+            </span>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden md:block text-sm text-zinc-600">{copy.tagline}</div>
+            {/* Language picker */}
             <div className="inline-flex rounded-full ring-1 ring-rose-200 overflow-hidden">
-              <button type="button" onClick={() => setLang("en")} className={`px-3 h-8 text-xs ${lang === 'en' ? 'bg-rose-100 text-rose-700' : 'text-zinc-600 hover:text-zinc-800'}`} aria-pressed={lang === 'en'}>
+              <button
+                type="button"
+                onClick={() => setLang("en")}
+                className={`px-3 h-8 text-xs ${lang === "en" ? "bg-rose-100 text-rose-700" : "text-zinc-600 hover:text-zinc-800"}`}
+                aria-pressed={lang === "en"}
+              >
                 {copy.en}
               </button>
-              <button type="button" onClick={() => setLang("es")} className={`px-3 h-8 text-xs ${lang === 'es' ? 'bg-rose-100 text-rose-700' : 'text-zinc-600 hover:text-zinc-800'}`} aria-pressed={lang === 'es'}>
+              <button
+                type="button"
+                onClick={() => setLang("es")}
+                className={`px-3 h-8 text-xs ${lang === "es" ? "bg-rose-100 text-rose-700" : "text-zinc-600 hover:text-zinc-800"}`}
+                aria-pressed={lang === "es"}
+              >
                 {copy.es}
               </button>
             </div>
@@ -342,16 +401,13 @@ export default function App() {
       {/* Hero */}
       <main className="relative z-10">
         <section className="mx-auto max-w-6xl px-6 pt-8 pb-20 md:pt-16 md:pb-28">
-          {/* On desktop, place text + media side-by-side; on mobile, stacked */}
           <div className="grid md:grid-cols-2 gap-8 items-start">
-            {/* Left: copy + form */}
+            {/* Left side: copy + form */}
             <div className="relative max-w-3xl">
               <Sheen />
-              <h1 className="text-4xl md:text-6xl leading-tight font-serif text-zinc-900">
+              <h1 className="text-4xl md:text-6xl leading-tight font-serif [font-family:'Cormorant_Garamond',ui-serif,Georgia,serif] text-zinc-900">
                 {copy.heroLead}
-                <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#c5a24a,#c44e84,#2f6fbf,#c5a24a)] bg-[length:220%_100%] animate-[shimmer_6s_linear_infinite]">
-                  {copy.heroSpan}
-                </span>
+                <ShimmerText>{copy.heroSpan}</ShimmerText>
               </h1>
 
               {/* Description with trailing typewriter traits */}
@@ -367,14 +423,16 @@ export default function App() {
 
               {/* Signup */}
               <div className="mt-8 relative">
-                <div className="absolute -inset-[1px] rounded-2xl bg-[linear-gradient(135deg,rgba(197,162,74,.35),rgba(255,255,255,.6),rgba(47,111,191,.35))] opacity-60 blur-[2px]" />
+                <div className="absolute -inset-[1px] rounded-2xl bg-[linear-gradient(135deg,rgba(231,200,115,.35),rgba(255,255,255,.6),rgba(207,231,255,.35))] opacity-60 blur-[2px]" />
                 <div className="relative rounded-2xl bg-white/60 backdrop-blur-xl ring-1 ring-white/60 shadow-sm">
                   <form
                     onSubmit={handleSubscribe}
                     className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4"
                   >
                     <div className="sm:flex-1">
-                      <label htmlFor="email" className="sr-only">{copy.emailLabel}</label>
+                      <label htmlFor="email" className="sr-only">
+                        {copy.emailLabel}
+                      </label>
                       <input
                         id="email"
                         type="email"
@@ -394,9 +452,10 @@ export default function App() {
                       <span className="inline-flex items-center gap-2 text-sm font-medium">
                         <Mail className="h-4 w-4" /> {status === "loading" ? copy.joining : copy.notify}
                       </span>
+                      {/* smooth, full sweep (pure CSS) */}
                       <span
                         aria-hidden
-                        className="btnShine pointer-events-none absolute -inset-y-2 -left-1/2 w-1/2 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)] transform-gpu will-change-transform"
+                        className="btnShine pointer-events-none absolute -inset-y-2 -left-1/2 w-1/2 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)] transform-gpu"
                       />
                     </button>
                   </form>
@@ -411,54 +470,36 @@ export default function App() {
               {/* Visual stepper */}
               <div aria-label="How it works" className="mt-8">
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 items-stretch">
-                  <div className="relative flex items-start gap-3 p-4 rounded-2xl ring-1 ring-rose-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-                    <div className="relative shrink-0">
-                      <div className="h-12 w-12 grid place-items-center rounded-full bg-gradient-to-br from-rose-100 via-rose-200 to-amber-100 ring-1 ring-rose-200/70 shadow-sm">
-                        <ClipboardList className="w-5 h-5 text-rose-600" />
-                      </div>
-                      <span className="absolute -top-1 -left-1 h-5 w-5 rounded-full bg-white text-rose-600 ring-1 ring-rose-300 grid place-items-center text-[10px] font-semibold">1</span>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-base font-medium text-zinc-900">{copy.step1Title}</div>
-                      <p className="text-xs text-zinc-600 leading-snug">{copy.step1Desc}</p>
-                    </div>
-                  </div>
+                  <Step
+                    no="1"
+                    icon={<ClipboardList className="w-5 h-5 text-rose-600" />}
+                    title={copy.step1Title}
+                    desc={copy.step1Desc}
+                  />
                   <div className="hidden md:flex items-center justify-center text-zinc-400 select-none">→</div>
-                  <div className="relative flex items-start gap-3 p-4 rounded-2xl ring-1 ring-rose-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-                    <div className="relative shrink-0">
-                      <div className="h-12 w-12 grid place-items-center rounded-full bg-gradient-to-br from-rose-100 via-rose-200 to-amber-100 ring-1 ring-rose-200/70 shadow-sm">
-                        <Wand2 className="w-5 h-5 text-rose-600" />
-                      </div>
-                      <span className="absolute -top-1 -left-1 h-5 w-5 rounded-full bg-white text-rose-600 ring-1 ring-rose-300 grid place-items-center text-[10px] font-semibold">2</span>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-base font-medium text-zinc-900">{copy.step2Title}</div>
-                      <p className="text-xs text-zinc-600 leading-snug">{copy.step2Desc}</p>
-                    </div>
-                  </div>
+                  <Step
+                    no="2"
+                    icon={<Wand2 className="w-5 h-5 text-rose-600" />}
+                    title={copy.step2Title}
+                    desc={copy.step2Desc}
+                  />
                   <div className="hidden md:flex items-center justify-center text-zinc-400 select-none">→</div>
-                  <div className="relative flex items-start gap-3 p-4 rounded-2xl ring-1 ring-rose-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-                    <div className="relative shrink-0">
-                      <div className="h-12 w-12 grid place-items-center rounded-full bg-gradient-to-br from-rose-100 via-rose-200 to-amber-100 ring-1 ring-rose-200/70 shadow-sm">
-                        <Gem className="w-5 h-5 text-rose-600" />
-                      </div>
-                      <span className="absolute -top-1 -left-1 h-5 w-5 rounded-full bg-white text-rose-600 ring-1 ring-rose-300 grid place-items-center text-[10px] font-semibold">3</span>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-base font-medium text-zinc-900">{copy.step3Title}</div>
-                      <p className="text-xs text-zinc-600 leading-snug">{copy.step3Desc}</p>
-                    </div>
-                  </div>
+                  <Step
+                    no="3"
+                    icon={<Gem className="w-5 h-5 text-rose-600" />}
+                    title={copy.step3Title}
+                    desc={copy.step3Desc}
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Right: liquid-glass media card with looping 1:1 video */}
+            {/* Right side: liquid-glass media card with looping 1:1 video */}
             <div className="relative">
-              {/* outer soft glow */}
-              <div className="absolute -inset-4 rounded-[1.75rem] bg-[linear-gradient(120deg,rgba(197,162,74,.18),rgba(255,255,255,.35),rgba(47,111,191,.18))] blur-xl opacity-70" />
+              {/* outer glow */}
+              <div className="absolute -inset-4 rounded-[1.75rem] bg-[linear-gradient(120deg,rgba(231,200,115,.18),rgba(255,255,255,.35),rgba(47,111,191,.18))] blur-xl opacity-70" />
               {/* glass frame */}
-              <div className="relative rounded-[1.5rem] p-[1px] bg-[linear-gradient(140deg,rgba(255,255,255,.8),rgba(255,255,255,.2))]">
+              <div className="relative rounded-[1.5rem] p-[1px] bg-[linear-gradient(140deg,rgba(255,255,255,.85),rgba(255,255,255,.25))]">
                 <div className="rounded-[1.45rem] bg-white/45 backdrop-blur-xl ring-1 ring-white/60 shadow-sm overflow-hidden">
                   {/* square aspect video */}
                   <div className="relative aspect-square">
@@ -474,7 +515,7 @@ export default function App() {
                       <source src="/hero-square.mp4" type="video/mp4" />
                     </video>
                     {/* animated caustics overlay */}
-                    <div className="caustics pointer-events-none absolute inset-0 opacity-55 mix-blend-soft-light" />
+                    <div className="caustics absolute inset-0 opacity-55" />
                   </div>
 
                   <div className="flex items-center justify-between px-4 py-3">
@@ -484,6 +525,7 @@ export default function App() {
                 </div>
               </div>
             </div>
+            {/* /Right */}
           </div>
         </section>
       </main>
