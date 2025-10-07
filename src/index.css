@@ -2,68 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base layer */
-@layer base {
-  html, body, #root { height: 100%; }
-  body { @apply bg-slate-950 text-white antialiased; }
-}
-
-/* Reusable glass + liquid utilities */
+/* Extra keyframes (used by shimmer) */
 @layer utilities {
-  /* use supported opacity values in @apply */
-  .glass {
-    /* was bg-white/8 border-white/15 */
-    @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-glass;
-  }
-
-  .glass-hover {
-    /* keep it simple; no non-core shadow tokens in @apply */
-    @apply hover:bg-white/10 hover:shadow-xl transition-colors;
-  }
-
-  .glass-strong {
-    /* was bg-white/12 */
-    @apply bg-white/10 backdrop-blur-2xl border border-white/20;
-    box-shadow: 0 10px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
-  }
-
-  .liquid-edge { position: relative; }
-  .liquid-edge::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background:
-      radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,.25), transparent 50%),
-      radial-gradient(120% 140% at 100% 0%, rgba(255,255,255,.12), transparent 60%),
-      linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
-
-    /* standard + webkit masks for the inner edge */
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-
-    /* compositing: spec + Safari */
-    mask-composite: exclude;
-    -webkit-mask-composite: xor;
-
-    pointer-events: none;
-  }
-
-  .btn-primary {
-    @apply relative inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium
-           bg-gradient-to-b from-aurelia-400/70 to-aurelia-600/70
-           text-white ring-1 ring-white/20 shadow-lg;
-  }
-  .btn-primary::after {
-    content:"";
-    position:absolute; inset:0; border-radius:inherit;
-    background: linear-gradient(90deg, rgba(255,255,255,.4), transparent 60%);
-    opacity:.0; transition: opacity .3s ease;
-  }
-  .btn-primary:hover::after { opacity:.35; }
-
-  .btn-ghost {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium glass;
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 }
