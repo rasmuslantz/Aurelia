@@ -1,4 +1,3 @@
-// src/App.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Sparkles, ClipboardList, Wand2, Gem } from "lucide-react";
@@ -80,7 +79,7 @@ const COPY: Record<Lang, any> = {
   },
 };
 
-/** Liquid-glass crystal drop logo (kept, adjusted for dark bg) */
+/** Liquid-glass crystal drop logo */
 const AureliaLogo = () => (
   <motion.div
     whileHover={{ rotate: -2, scale: 1.02 }}
@@ -158,7 +157,7 @@ const Sheen = () => (
   </motion.div>
 );
 
-/** Champagne shimmer for the “made for you” words */
+/** Champagne shimmer for “made for you” */
 const ShimmerText = ({ children }: { children: React.ReactNode }) => (
   <motion.span
     className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#e7c873,#f1b2c6,#cfe9ff,#e7c873)] bg-[length:200%_100%]"
@@ -255,33 +254,41 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
   );
 };
 
-/** Visual step chip (now using glass utilities for dark theme) */
-const Step = ({
+/** ----- Light Steps (like your original) ----- */
+const LightStep = ({
   no, icon, title, desc,
 }: { no: string; icon: React.ReactNode; title: string; desc: string }) => (
-  <div className="relative flex items-start gap-3 rounded-2xl p-4 glass liquid-edge">
-    <div className="relative shrink-0">
-      <div className="grid h-12 w-12 place-items-center rounded-full ring-1 ring-white/20 bg-gradient-to-br from-rose-200/30 via-rose-300/25 to-amber-200/30">
-        {icon}
+  <div className="relative rounded-2xl p-5 ring-1 ring-rose-200/70 bg-white/75 backdrop-blur-xl shadow-[0_8px_40px_rgba(223,164,198,0.12)]">
+    <div className="flex items-start gap-3">
+      <div className="relative shrink-0">
+        <div className="grid h-12 w-12 place-items-center rounded-full ring-1 ring-rose-200/70 bg-[radial-gradient(75%_75%_at_30%_30%,#ffe3ea_0%,#fff6e0_35%,transparent_60%)]">
+          {icon}
+        </div>
+        <span className="absolute -top-1 -left-1 grid h-5 w-5 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-300 text-[10px] font-semibold">
+          {no}
+        </span>
       </div>
-      <span className="absolute -top-1 -left-1 grid h-5 w-5 place-items-center rounded-full bg-white/90 text-rose-700 ring-1 ring-white/60 text-[10px] font-semibold">
-        {no}
-      </span>
-    </div>
-    <div className="min-w-0">
-      <div className="text-base font-medium text-white">{title}</div>
-      <p className="text-xs leading-snug text-white/70">{desc}</p>
+      <div className="min-w-0">
+        <div className="text-lg font-semibold text-zinc-900">{title}</div>
+        <p className="mt-1 text-sm leading-snug text-zinc-600">{desc}</p>
+      </div>
     </div>
   </div>
 );
+
+const StepConnector = () => (
+  <div className="hidden md:flex items-center justify-center">
+    <span className="inline-block h-[2px] w-12 rounded-full bg-[linear-gradient(90deg,#f6d37a,#f38fb4)] opacity-80" />
+  </div>
+);
+/** ------------------------------------------ */
 
 export default function App() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
-
-  /** Auto-detect + remember language */
   const [lang, setLang] = useState<Lang>(getInitialLang());
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("aurelia_lang", lang);
@@ -318,15 +325,13 @@ export default function App() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      {/* helper keyframes + mobile clamp + button shine + caustics */}
+      {/* helper keyframes + caustics */}
       <style>{`
         @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
         @keyframes btn-shine{0%{transform:translateX(-140%) rotate(12deg)}100%{transform:translateX(240%) rotate(12deg)}}
         .btnShine{animation:btn-shine 2.2s linear infinite}
         @media (prefers-reduced-motion: reduce){.btnShine{animation:none!important}}
-        .nowrapTail{ white-space: nowrap; }
 
-        /* soft animated caustics overlay for the video */
         @keyframes causticFlow {
           0% { background-position: 0% 0%, 100% 100%; }
           50% { background-position: 100% 0%, 0% 100%; }
@@ -404,14 +409,11 @@ export default function App() {
               {copy.heroDot}
             </h1>
 
-            <p className="descSize mt-4 text-white/70 sm:text-lg md:text-xl">
+            <p className="mt-4 text-white/70 sm:text-lg md:text-xl">
               {copy.desc1}
               <span className="font-semibold text-white">{copy.ai}</span>
-              {copy.desc2}
-              <span className="nowrapTail">
-                {"\u00A0"}
-                <TypeTrait key={lang} lang={lang} />
-              </span>
+              {copy.desc2}{" "}
+              <TypeTrait key={lang} lang={lang} />
             </p>
 
             {/* Signup (glass card) */}
@@ -440,13 +442,12 @@ export default function App() {
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="btn-primary h-12 rounded-full px-6 sm:px-7 disabled:cursor-not-allowed disabled:opacity-70 overflow-hidden relative"
+                    className="btn-primary relative h-12 rounded-full px-6 sm:px-7 disabled:cursor-not-allowed disabled:opacity-70 overflow-hidden"
                   >
                     <span className="inline-flex items-center gap-2 text-sm font-medium">
                       <Mail className="h-4 w-4" />
                       {status === "loading" ? copy.joining : copy.notify}
                     </span>
-                    {/* soft sweep highlight */}
                     <span
                       aria-hidden
                       className="btnShine pointer-events-none absolute -inset-y-2 -left-1/2 w-1/2 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)] transform-gpu will-change-transform"
@@ -461,30 +462,26 @@ export default function App() {
               </div>
             </div>
 
-            {/* Steps */}
+            {/* Steps (light look, like before) */}
             <div aria-label="How it works" className="mt-8">
-              <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
-                <Step
+              <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
+                <LightStep
                   no="1"
-                  icon={<ClipboardList className="h-5 w-5 text-rose-300" />}
+                  icon={<ClipboardList className="h-5 w-5 text-rose-600" />}
                   title={copy.step1Title}
                   desc={copy.step1Desc}
                 />
-                <div className="hidden select-none items-center justify-center text-white/20 md:flex">
-                  <span className="inline-block h-[2px] w-10 rounded-full bg-gradient-to-r from-white/30 via-white/20 to-white/30" />
-                </div>
-                <Step
+                <StepConnector />
+                <LightStep
                   no="2"
-                  icon={<Wand2 className="h-5 w-5 text-rose-300" />}
+                  icon={<Wand2 className="h-5 w-5 text-rose-600" />}
                   title={copy.step2Title}
                   desc={copy.step2Desc}
                 />
-                <div className="hidden select-none items-center justify-center text-white/20 md:flex">
-                  <span className="inline-block h-[2px] w-10 rounded-full bg-gradient-to-r from-white/30 via-white/20 to-white/30" />
-                </div>
-                <Step
+                <StepConnector />
+                <LightStep
                   no="3"
-                  icon={<Gem className="h-5 w-5 text-rose-300" />}
+                  icon={<Gem className="h-5 w-5 text-rose-600" />}
                   title={copy.step3Title}
                   desc={copy.step3Desc}
                 />
@@ -494,13 +491,10 @@ export default function App() {
 
           {/* Right: liquid-glass media card */}
           <div className="relative">
-            {/* outer soft glow */}
             <div className="absolute -inset-6 rounded-[2rem] blur-2xl bg-[radial-gradient(60%_60%_at_30%_20%,rgba(231,200,115,0.22),transparent_60%),radial-gradient(50%_50%_at_70%_80%,rgba(246,220,229,0.22),transparent_60%)]" />
-            {/* glass frame */}
             <div className="relative rounded-[2rem] p-[1px] bg-[linear-gradient(140deg,rgba(255,255,255,.7),rgba(255,255,255,.18))] shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
               <div className="overflow-hidden rounded-[1.92rem] bg-white/10 backdrop-blur-2xl ring-1 ring-white/15">
                 <div className="relative aspect-square">
-                  {/* subtle AI badge in corner */}
                   <div className="absolute left-3 top-3 z-10 rounded-full px-2 py-1 text-[10px] tracking-wide bg-white/15 ring-1 ring-white/25 backdrop-blur-md text-white/80">
                     AI
                   </div>
@@ -515,7 +509,6 @@ export default function App() {
                     <source src="/hero-square.webm" type="video/webm" />
                     <source src="/hero-square.mp4" type="video/mp4" />
                   </video>
-                  {/* animated caustics overlay */}
                   <div className="caustics pointer-events-none absolute inset-0 opacity-60 mix-blend-soft-light" />
                 </div>
               </div>
