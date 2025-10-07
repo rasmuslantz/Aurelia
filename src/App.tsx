@@ -80,12 +80,12 @@ const COPY: Record<Lang, any> = {
   },
 };
 
-/** Liquid-glass crystal drop logo */
+/** Liquid-glass crystal drop logo (kept, adjusted for dark bg) */
 const AureliaLogo = () => (
   <motion.div
     whileHover={{ rotate: -2, scale: 1.02 }}
     transition={{ type: "spring", stiffness: 120, damping: 14 }}
-    className="relative h-10 w-10 rounded-2xl overflow-hidden ring-1 ring-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_40px_rgba(223,164,198,0.18)]"
+    className="relative h-10 w-10 overflow-hidden rounded-2xl ring-1 ring-white/30 bg-white/30 backdrop-blur-xl shadow-[0_8px_40px_rgba(223,164,198,0.18)]"
   >
     <svg viewBox="0 0 64 64" className="absolute inset-0 h-full w-full">
       <defs>
@@ -137,7 +137,7 @@ const FloatingSparkle = ({ className = "" }: { className?: string }) => (
     animate={{ opacity: [0, 0.7, 0], y: [-6, 3, -6], scale: [0.9, 1, 0.95] }}
     transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
   >
-    <Sparkles className="w-3.5 h-3.5 text-rose-400/80" />
+    <Sparkles className="h-3.5 w-3.5 text-rose-300/90" />
   </motion.div>
 );
 
@@ -170,7 +170,7 @@ const ShimmerText = ({ children }: { children: React.ReactNode }) => (
   </motion.span>
 );
 
-/** Typewriter rotating traits (fixed width; remount on lang; keep on same line) */
+/** Typewriter rotating traits */
 const TypeTrait = ({ lang }: { lang: Lang }) => {
   const traits = useMemo(
     () =>
@@ -238,18 +238,16 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
   );
 
   return (
-    <span className="inline-flex items-end align-baseline h-8">
+    <span className="inline-flex h-8 items-end align-baseline">
       <span
-        className="relative inline-block leading-8 font-medium tracking-wide flex-shrink-0"
+        className="relative inline-block flex-shrink-0 leading-8 font-medium tracking-wide"
         style={{ width: `${longest}ch` }}
         aria-live="polite"
       >
         <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#c5a24a,#c44e84,#2f6fbf,#c5a24a)] bg-[length:220%_100%] animate-[shimmer_8s_linear_infinite]">
           {traits[i].substring(0, sub)}
         </span>
-        <span
-          className={`ml-[1px] inline-block w-[1ch] text-zinc-400 ${blink ? "opacity-60" : "opacity-0"}`}
-        >
+        <span className={`ml-[1px] inline-block w-[1ch] text-white/60 ${blink ? "opacity-60" : "opacity-0"}`}>
           |
         </span>
       </span>
@@ -257,22 +255,22 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
   );
 };
 
-/** Visual step chip (refined liquid glass) */
+/** Visual step chip (now using glass utilities for dark theme) */
 const Step = ({
   no, icon, title, desc,
 }: { no: string; icon: React.ReactNode; title: string; desc: string }) => (
-  <div className="relative flex items-start gap-3 p-4 rounded-2xl ring-1 ring-rose-200/60 bg-white/70 backdrop-blur-xl shadow-[0_8px_40px_rgba(223,164,198,0.12)]">
+  <div className="relative flex items-start gap-3 rounded-2xl p-4 glass liquid-edge">
     <div className="relative shrink-0">
-      <div className="h-12 w-12 grid place-items-center rounded-full bg-gradient-to-br from-rose-100 via-rose-200 to-amber-100 ring-1 ring-rose-200/70 shadow-sm">
+      <div className="grid h-12 w-12 place-items-center rounded-full ring-1 ring-white/20 bg-gradient-to-br from-rose-200/30 via-rose-300/25 to-amber-200/30">
         {icon}
       </div>
-      <span className="absolute -top-1 -left-1 h-5 w-5 rounded-full bg-white text-rose-600 ring-1 ring-rose-300 grid place-items-center text-[10px] font-semibold">
+      <span className="absolute -top-1 -left-1 grid h-5 w-5 place-items-center rounded-full bg-white/90 text-rose-700 ring-1 ring-white/60 text-[10px] font-semibold">
         {no}
       </span>
     </div>
     <div className="min-w-0">
-      <div className="text-base font-medium text-zinc-900">{title}</div>
-      <p className="text-xs text-zinc-600 leading-snug">{desc}</p>
+      <div className="text-base font-medium text-white">{title}</div>
+      <p className="text-xs leading-snug text-white/70">{desc}</p>
     </div>
   </div>
 );
@@ -319,7 +317,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-zinc-800 relative overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
       {/* helper keyframes + mobile clamp + button shine + caustics */}
       <style>{`
         @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -327,7 +325,6 @@ export default function App() {
         .btnShine{animation:btn-shine 2.2s linear infinite}
         @media (prefers-reduced-motion: reduce){.btnShine{animation:none!important}}
         .nowrapTail{ white-space: nowrap; }
-        @media (max-width:640px){ .descSize{ font-size: 0.95rem; } }
 
         /* soft animated caustics overlay for the video */
         @keyframes causticFlow {
@@ -345,10 +342,16 @@ export default function App() {
         }
       `}</style>
 
-      {/* ambient glows */}
+      {/* Animated gradient + noise backdrop */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_20%_10%,rgba(255,115,144,.18),transparent_60%),radial-gradient(80%_60%_at_80%_20%,rgba(66,153,225,.18),transparent_60%),linear-gradient(180deg,#0b0f17_0%,#121826_100%)] animate-gradient-slow bg-[length:200%_200%]" />
+        <div className="absolute inset-0 bg-noise mix-blend-soft-light opacity-40" />
+        <div className="absolute -top-24 -left-24 h-[38rem] w-[38rem] rounded-full bg-rose-400/20 blur-[120px]" />
+        <div className="absolute -bottom-24 -right-24 h-[38rem] w-[38rem] rounded-full bg-sky-400/20 blur-[120px]" />
+      </div>
+
+      {/* Ambient sparkles */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 -right-40 h-[36rem] w-[36rem] rounded-full blur-3xl opacity-50 bg-[radial-gradient(circle_at_30%_30%,#e9f3ff_0%,#fff_60%)]" />
-        <div className="absolute -bottom-40 -left-40 h-[34rem] w-[34rem] rounded-full blur-3xl opacity-40 bg-[radial-gradient(circle_at_70%_70%,#fde2e4_0%,#fff_60%)]" />
         <FloatingSparkle className="top-28 left-16" />
         <FloatingSparkle className="top-44 right-20" />
         <FloatingSparkle className="bottom-24 left-1/3" />
@@ -356,27 +359,22 @@ export default function App() {
 
       {/* Header */}
       <header className="relative z-10">
-        <div className="mx-auto max-w-6xl px-6 py-6 flex items-center justify-between gap-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-6 py-6">
           <div className="flex items-center gap-3">
             <AureliaLogo />
-            <span className="text-xl font-medium tracking-wide [font-family:'Cormorant_Garamond',ui-serif] text-zinc-900">
-              Aurelia
-            </span>
+            <span className="font-serif text-2xl tracking-[.02em]">Aurelia</span>
           </div>
+
           <div className="flex items-center gap-4">
-            <div className="hidden md:block text-sm text-zinc-600 [font-family:'Inter',ui-sans-serif]">
+            <div className="hidden text-sm text-white/70 md:block">
               {copy.tagline}
             </div>
-            {/* Language picker */}
-            <div className="inline-flex rounded-full ring-1 ring-rose-200 overflow-hidden bg-white/70 backdrop-blur">
+            {/* Language picker (glass pill) */}
+            <div className="inline-flex overflow-hidden rounded-full ring-1 ring-white/15 glass">
               <button
                 type="button"
                 onClick={() => setLang("en")}
-                className={`px-3 h-8 text-xs ${
-                  lang === "en"
-                    ? "bg-rose-100 text-rose-700"
-                    : "text-zinc-600 hover:text-zinc-800"
-                }`}
+                className={`px-3 h-8 text-xs ${lang === "en" ? "bg-white/20 text-white" : "text-white/70 hover:text-white"}`}
                 aria-pressed={lang === "en"}
               >
                 {copy.en}
@@ -384,11 +382,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setLang("es")}
-                className={`px-3 h-8 text-xs ${
-                  lang === "es"
-                    ? "bg-rose-100 text-rose-700"
-                    : "text-zinc-600 hover:text-zinc-800"
-                }`}
+                className={`px-3 h-8 text-xs ${lang === "es" ? "bg-white/20 text-white" : "text-white/70 hover:text-white"}`}
                 aria-pressed={lang === "es"}
               >
                 {copy.es}
@@ -399,153 +393,142 @@ export default function App() {
       </header>
 
       {/* Hero */}
-      <main className="relative z-10">
-        <section className="mx-auto max-w-6xl px-6 pt-8 pb-20 md:pt-16 md:pb-28">
-          {/* 2-column on desktop */}
-          <div className="grid md:grid-cols-2 gap-10 items-start">
-            {/* Left: copy + form */}
-            <div className="relative max-w-3xl">
-              <Sheen />
-              <h1 className="text-4xl md:text-6xl leading-tight font-serif [font-family:'Cormorant_Garamond',ui-serif,Georgia,serif] text-zinc-900">
-                {copy.heroLead}
-                <ShimmerText>{copy.heroSpan}</ShimmerText>
-                {copy.heroDot}
-              </h1>
+      <section className="relative z-10 mx-auto max-w-7xl px-6 pt-8 pb-20 md:pt-16 md:pb-28">
+        <div className="grid items-start gap-10 md:grid-cols-2">
+          {/* Left: copy + form */}
+          <div className="relative max-w-3xl">
+            <Sheen />
+            <h1 className="font-serif text-4xl leading-tight md:text-6xl">
+              {copy.heroLead}
+              <ShimmerText>{copy.heroSpan}</ShimmerText>
+              {copy.heroDot}
+            </h1>
 
-              {/* Description with trailing typewriter traits (kept on same line) */}
-              <p className="mt-4 descSize sm:text-lg md:text-xl text-zinc-800 [font-family:'Inter',ui-sans-serif,system-ui]">
-                {copy.desc1}
-                <span className="font-semibold">{copy.ai}</span>
-                {copy.desc2}
-                <span className="nowrapTail">
-                  {"\u00A0"}
-                  <TypeTrait key={lang} lang={lang} />
-                </span>
-              </p>
+            <p className="descSize mt-4 text-white/70 sm:text-lg md:text-xl">
+              {copy.desc1}
+              <span className="font-semibold text-white">{copy.ai}</span>
+              {copy.desc2}
+              <span className="nowrapTail">
+                {"\u00A0"}
+                <TypeTrait key={lang} lang={lang} />
+              </span>
+            </p>
 
-              {/* Signup */}
-              <div className="mt-8 relative">
-                {/* glossy border glow */}
-                <div className="absolute -inset-[1px] rounded-2xl bg-[linear-gradient(135deg,rgba(231,200,115,.35),rgba(255,255,255,.6),rgba(207,231,255,.35))] opacity-60 blur-[2px]" />
-                <div className="relative rounded-2xl bg-white/60 backdrop-blur-xl ring-1 ring-white/60 shadow-[0_20px_80px_rgba(223,164,198,0.18)]">
-                  <form
-                    onSubmit={handleSubscribe}
-                    className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4"
+            {/* Signup (glass card) */}
+            <div className="relative mt-8">
+              <div className="absolute -inset-[1px] rounded-2xl opacity-50 blur-[2px] bg-[linear-gradient(135deg,rgba(231,200,115,.35),rgba(255,255,255,.4),rgba(207,231,255,.35))]" />
+              <div className="relative rounded-2xl glass-strong">
+                <form
+                  onSubmit={handleSubscribe}
+                  className="flex flex-col gap-3 p-3 sm:flex-row sm:gap-4 sm:p-4"
+                >
+                  <div className="sm:flex-1">
+                    <label htmlFor="email" className="sr-only">
+                      {copy.emailLabel}
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder={copy.emailPlaceholder}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="h-12 w-full rounded-full border border-white/20 bg-white/10 px-4 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+                      aria-invalid={status === "error"}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={status === "loading"}
+                    className="btn-primary h-12 rounded-full px-6 sm:px-7 disabled:cursor-not-allowed disabled:opacity-70 overflow-hidden relative"
                   >
-                    <div className="sm:flex-1">
-                      <label htmlFor="email" className="sr-only">
-                        {copy.emailLabel}
-                      </label>
-                      <input
-                        id="email"
-                        type="email"
-                        autoComplete="email"
-                        placeholder={copy.emailPlaceholder}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="h-12 w-full rounded-full bg-white/90 border border-zinc-200 px-4 focus:outline-none focus:ring-2 focus:ring-rose-300 placeholder:text-zinc-400"
-                        aria-invalid={status === "error"}
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={status === "loading"}
-                      className="relative h-12 rounded-full px-6 sm:px-7 overflow-hidden bg-white text-zinc-900 ring-1 ring-rose-300 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
-                    >
-                      <span className="inline-flex items-center gap-2 text-sm font-medium">
-                        <Mail className="h-4 w-4" />{" "}
-                        {status === "loading" ? copy.joining : copy.notify}
-                      </span>
-                      {/* smooth, full-width sweep */}
-                      <span
-                        aria-hidden
-                        className="btnShine pointer-events-none absolute -inset-y-2 -left-1/2 w-1/2 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)] transform-gpu will-change-transform"
-                      />
-                    </button>
-                  </form>
-                  <div className="px-4 pb-4 -mt-2 min-h-[1.25rem] text-sm">
-                    {status === "error" && (
-                      <p className="text-rose-600">{message}</p>
-                    )}
-                    {status === "success" && (
-                      <p className="text-emerald-600">{message}</p>
-                    )}
-                    {status === "idle" && (
-                      <p className="text-zinc-500">{copy.subscribeIdle}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Step ribbon (desktop friendly) */}
-              <div aria-label="How it works" className="mt-8">
-                <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 items-stretch">
-                  <Step
-                    no="1"
-                    icon={<ClipboardList className="w-5 h-5 text-rose-600" />}
-                    title={copy.step1Title}
-                    desc={copy.step1Desc}
-                  />
-                  <div className="hidden md:flex items-center justify-center text-zinc-300 select-none">
-                    <span className="inline-block h-[2px] w-10 rounded-full bg-gradient-to-r from-rose-200 via-rose-300 to-amber-200" />
-                  </div>
-                  <Step
-                    no="2"
-                    icon={<Wand2 className="w-5 h-5 text-rose-600" />}
-                    title={copy.step2Title}
-                    desc={copy.step2Desc}
-                  />
-                  <div className="hidden md:flex items-center justify-center text-zinc-300 select-none">
-                    <span className="inline-block h-[2px] w-10 rounded-full bg-gradient-to-r from-amber-200 via-rose-300 to-rose-200" />
-                  </div>
-                  <Step
-                    no="3"
-                    icon={<Gem className="w-5 h-5 text-rose-600" />}
-                    title={copy.step3Title}
-                    desc={copy.step3Desc}
-                  />
+                    <span className="inline-flex items-center gap-2 text-sm font-medium">
+                      <Mail className="h-4 w-4" />
+                      {status === "loading" ? copy.joining : copy.notify}
+                    </span>
+                    {/* soft sweep highlight */}
+                    <span
+                      aria-hidden
+                      className="btnShine pointer-events-none absolute -inset-y-2 -left-1/2 w-1/2 rotate-12 bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,.9)_50%,rgba(255,255,255,0)_100%)] transform-gpu will-change-transform"
+                    />
+                  </button>
+                </form>
+                <div className="min-h-[1.25rem] -mt-2 px-4 pb-4 text-sm">
+                  {status === "error" && <p className="text-rose-300">{message}</p>}
+                  {status === "success" && <p className="text-emerald-300">{message}</p>}
+                  {status === "idle" && <p className="text-white/60">{copy.subscribeIdle}</p>}
                 </div>
               </div>
             </div>
 
-            {/* Right: liquid-glass media card with looping 1:1 video (no footer) */}
-            <div className="relative">
-              {/* outer soft glow */}
-              <div className="absolute -inset-6 rounded-[2rem] bg-[radial-gradient(60%_60%_at_30%_20%,rgba(231,200,115,0.22),transparent_60%),radial-gradient(50%_50%_at_70%_80%,rgba(246,220,229,0.22),transparent_60%)] blur-2xl" />
-              {/* glass frame */}
-              <div className="relative rounded-[2rem] p-[1px] bg-[linear-gradient(140deg,rgba(255,255,255,.9),rgba(255,255,255,.25))] shadow-[0_30px_120px_rgba(223,164,198,0.22)]">
-                <div className="rounded-[1.92rem] bg-white/55 backdrop-blur-2xl ring-1 ring-white/70 overflow-hidden">
-                  <div className="relative aspect-square">
-                    {/* subtle AI badge in corner */}
-                    <div className="absolute left-3 top-3 z-10 px-2 py-1 rounded-full text-[10px] tracking-wide bg-white/70 ring-1 ring-white/60 backdrop-blur-md text-zinc-600">
-                      AI
-                    </div>
-                    <video
-                      className="absolute inset-0 h-full w-full object-cover"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                    >
-                      <source src="/hero-square.webm" type="video/webm" />
-                      <source src="/hero-square.mp4" type="video/mp4" />
-                    </video>
-                    {/* animated caustics overlay */}
-                    <div className="caustics pointer-events-none absolute inset-0 opacity-60 mix-blend-soft-light" />
+            {/* Steps */}
+            <div aria-label="How it works" className="mt-8">
+              <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
+                <Step
+                  no="1"
+                  icon={<ClipboardList className="h-5 w-5 text-rose-300" />}
+                  title={copy.step1Title}
+                  desc={copy.step1Desc}
+                />
+                <div className="hidden select-none items-center justify-center text-white/20 md:flex">
+                  <span className="inline-block h-[2px] w-10 rounded-full bg-gradient-to-r from-white/30 via-white/20 to-white/30" />
+                </div>
+                <Step
+                  no="2"
+                  icon={<Wand2 className="h-5 w-5 text-rose-300" />}
+                  title={copy.step2Title}
+                  desc={copy.step2Desc}
+                />
+                <div className="hidden select-none items-center justify-center text-white/20 md:flex">
+                  <span className="inline-block h-[2px] w-10 rounded-full bg-gradient-to-r from-white/30 via-white/20 to-white/30" />
+                </div>
+                <Step
+                  no="3"
+                  icon={<Gem className="h-5 w-5 text-rose-300" />}
+                  title={copy.step3Title}
+                  desc={copy.step3Desc}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right: liquid-glass media card */}
+          <div className="relative">
+            {/* outer soft glow */}
+            <div className="absolute -inset-6 rounded-[2rem] blur-2xl bg-[radial-gradient(60%_60%_at_30%_20%,rgba(231,200,115,0.22),transparent_60%),radial-gradient(50%_50%_at_70%_80%,rgba(246,220,229,0.22),transparent_60%)]" />
+            {/* glass frame */}
+            <div className="relative rounded-[2rem] p-[1px] bg-[linear-gradient(140deg,rgba(255,255,255,.7),rgba(255,255,255,.18))] shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
+              <div className="overflow-hidden rounded-[1.92rem] bg-white/10 backdrop-blur-2xl ring-1 ring-white/15">
+                <div className="relative aspect-square">
+                  {/* subtle AI badge in corner */}
+                  <div className="absolute left-3 top-3 z-10 rounded-full px-2 py-1 text-[10px] tracking-wide bg-white/15 ring-1 ring-white/25 backdrop-blur-md text-white/80">
+                    AI
                   </div>
+                  <video
+                    className="absolute inset-0 h-full w-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source src="/hero-square.webm" type="video/webm" />
+                    <source src="/hero-square.mp4" type="video/mp4" />
+                  </video>
+                  {/* animated caustics overlay */}
+                  <div className="caustics pointer-events-none absolute inset-0 opacity-60 mix-blend-soft-light" />
                 </div>
               </div>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-zinc-100">
-        <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
+      <footer className="relative z-10 border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-10 text-sm text-white/60 md:flex-row">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-rose-500" />
+            <Sparkles className="h-4 w-4 text-rose-300" />
             <span>© {new Date().getFullYear()} Aurelia</span>
           </div>
           <div className="inline-flex items-center gap-6">
@@ -553,6 +536,6 @@ export default function App() {
           </div>
         </div>
       </footer>
-    </div>
+    </main>
   );
 }
