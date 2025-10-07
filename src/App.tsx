@@ -20,16 +20,20 @@ const getInitialLang = (): Lang => {
   return nav.toLowerCase().startsWith("es") ? "es" : "en";
 };
 
+/** Copy with the new description split so we can style AI + trait */
 const COPY: Record<Lang, any> = {
   en: {
     tagline: "Jewelry made for you — with AI",
     heroLead: "Jewelry ",
     heroSpan: "made for you",
     heroDot: ".",
-    desc1: "Tell us a little about you. Our ",
+    // New description parts
+    descA: "Tell us a little about you. Our ",
     ai: "AI",
-    desc2:
-      " learns what flatters you and picks the piece that feels like you — matched to your",
+    descB:
+      " learns what flatters you and picks the piece that feels like you — matched to your ",
+    trait: "personality.",
+    // Steps + misc
     emailLabel: "Email address",
     emailPlaceholder: "Your email",
     notify: "Notify me",
@@ -54,10 +58,13 @@ const COPY: Record<Lang, any> = {
     heroLead: "Joyería ",
     heroSpan: "hecha para ti",
     heroDot: ".",
-    desc1: "Cuéntanos un poco sobre ti. Nuestra ",
+    // New description parts (ES)
+    descA: "Cuéntanos un poco sobre ti. Nuestra ",
     ai: "IA",
-    desc2:
-      " aprende lo que te favorece y elige la pieza que se siente como tú — alineada con tu",
+    descB:
+      " aprende lo que te favorece y elige la pieza que se siente como tú — alineada con tu ",
+    trait: "personalidad.",
+    // Steps + misc
     emailLabel: "Correo electrónico",
     emailPlaceholder: "Tu email",
     notify: "Avísame",
@@ -168,91 +175,6 @@ const ShimmerText = ({ children }: { children: React.ReactNode }) => (
     {children}
   </motion.span>
 );
-
-/** Typewriter rotating traits */
-const TypeTrait = ({ lang }: { lang: Lang }) => {
-  const traits = useMemo(
-    () =>
-      lang === "es"
-        ? [
-            "personalidad.",
-            "astrología.",
-            "estilo.",
-            "aspecto.",
-            "vibra.",
-            "estado de ánimo.",
-            "aura.",
-            "forma del rostro.",
-            "tono de piel.",
-            "ocasión.",
-            "energía.",
-          ]
-        : [
-            "personality.",
-            "astrology.",
-            "style.",
-            "looks.",
-            "vibe.",
-            "mood.",
-            "aura.",
-            "face shape.",
-            "skin tone.",
-            "occasion.",
-            "energy.",
-          ],
-    [lang]
-  );
-
-  const [i, setI] = useState(0);
-  const [sub, setSub] = useState(0);
-  const [del, setDel] = useState(false);
-  const [blink, setBlink] = useState(true);
-
-  useEffect(() => {
-    setI(0); setSub(0); setDel(false);
-  }, [lang]);
-
-  useEffect(() => {
-    const id = setInterval(() => setBlink((b) => !b), 520);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    const word = traits[i];
-    if (!del && sub === word.length) {
-      const hold = setTimeout(() => setDel(true), 900);
-      return () => clearTimeout(hold);
-    }
-    if (del && sub === 0) {
-      setDel(false); setI((i + 1) % traits.length);
-      return;
-    }
-    const t = setTimeout(() => setSub(sub + (del ? -1 : 1)), del ? 45 : 70);
-    return () => clearTimeout(t);
-  }, [sub, del, i, traits]);
-
-  const longest = useMemo(
-    () => traits.reduce((m, s) => Math.max(m, s.length), 0),
-    [traits]
-  );
-
-  return (
-    <span className="inline-flex h-8 items-end align-baseline">
-      <span
-        className="relative inline-block flex-shrink-0 leading-8 font-medium tracking-wide"
-        style={{ width: `${longest}ch` }}
-        aria-live="polite"
-      >
-        <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#c5a24a,#c44e84,#2f6fbf,#c5a24a)] bg-[length:220%_100%] animate-[shimmer_8s_linear_infinite]">
-          {traits[i].substring(0, sub)}
-        </span>
-        <span className={`ml-[1px] inline-block w-[1ch] text-white/60 ${blink ? "opacity-60" : "opacity-0"}`}>
-          |
-        </span>
-      </span>
-    </span>
-  );
-};
 
 /** ----- Light Steps (like your original) ----- */
 const LightStep = ({
@@ -409,11 +331,14 @@ export default function App() {
               {copy.heroDot}
             </h1>
 
-            <p className="mt-4 text-white/70 sm:text-lg md:text-xl">
-              {copy.desc1}
+            {/* NEW description: same font as title, translated, AI bold, colored trait */}
+            <p className="mt-4 font-serif text-white/80 sm:text-lg md:text-xl">
+              {copy.descA}
               <span className="font-semibold text-white">{copy.ai}</span>
-              {copy.desc2}{" "}
-              <TypeTrait key={lang} lang={lang} />
+              {copy.descB}
+              <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#9BB8FF,#B7A9FF,#CFE3A2)]">
+                {copy.trait}
+              </span>
             </p>
 
             {/* Signup (glass card) */}
