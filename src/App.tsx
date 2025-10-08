@@ -28,7 +28,7 @@ const COPY: Record<Lang, any> = {
     heroSpan: "made for you",
     heroDot: ".",
 
-    // description like the screenshot
+    // description like the reference image
     descA: "Tell us a little about you. Our ",
     ai: "AI",
     descB:
@@ -124,15 +124,10 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
   const [i, setI] = useState(0);
   const [sub, setSub] = useState(0);
   const [del, setDel] = useState(false);
-  const [blink, setBlink] = useState(true);
-
-  // restart when language changes
-  useEffect(() => { setI(0); setSub(0); setDel(false); }, [lang]);
 
   useEffect(() => {
-    const id = setInterval(() => setBlink((b) => !b), 520);
-    return () => clearInterval(id);
-  }, []);
+    setI(0); setSub(0); setDel(false);
+  }, [lang]);
 
   useEffect(() => {
     const word = traits[i];
@@ -141,8 +136,7 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
       return () => clearTimeout(hold);
     }
     if (del && sub === 0) {
-      setDel(false);
-      setI((i + 1) % traits.length);
+      setDel(false); setI((i + 1) % traits.length);
       return;
     }
     const t = setTimeout(() => setSub(sub + (del ? -1 : 1)), del ? 45 : 70);
@@ -164,21 +158,54 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
         <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#9BB8FF,#B7A9FF,#CFE3A2)]">
           {traits[i].substring(0, sub)}
         </span>
-        <span className="ml-[1px] inline-block w-[1ch] text-zinc-400">
-          |
-        </span>
+        <span className="ml-[1px] inline-block w-[1ch] text-zinc-400">|</span>
       </span>
     </span>
   );
 };
 
-/** Small logo */
+/** Refined logo: crisp on light backgrounds */
 const AureliaLogo = () => (
   <motion.div
     whileHover={{ rotate: -2, scale: 1.02 }}
-    transition={{ type: "spring", stiffness: 120, damping: 14 }}
-    className="relative h-10 w-10 overflow-hidden rounded-2xl ring-1 ring-rose-200 bg-white/80 backdrop-blur-xl shadow-[0_8px_40px_rgba(223,164,198,0.18)]"
-  />
+    transition={{ type: "spring", stiffness: 140, damping: 14 }}
+    className="relative h-9 w-9 md:h-10 md:w-10 overflow-hidden rounded-2xl bg-white ring-1 ring-rose-300/70 shadow-[0_6px_22px_rgba(223,164,198,0.25)]"
+    aria-label="Aurelia"
+    role="img"
+  >
+    <svg viewBox="0 0 64 64" className="absolute inset-0 h-full w-full">
+      <defs>
+        <linearGradient id="au-drop" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f7e9b6" />
+          <stop offset="50%" stopColor="#f7c9d8" />
+          <stop offset="100%" stopColor="#d5e8ff" />
+        </linearGradient>
+        <linearGradient id="au-gloss" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0" />
+          <stop offset="50%" stopColor="#fff" stopOpacity=".7" />
+          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+        <clipPath id="au-shape">
+          <path d="M32 6 C38 14, 46 22, 50 31 C54 40, 48 54, 32 58 C16 54, 10 40, 14 31 C18 22, 26 14, 32 6 Z" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#au-shape)">
+        <rect width="64" height="64" fill="url(#au-drop)" />
+        <rect x="-96" y="0" width="96" height="64" fill="url(#au-gloss)">
+          <animate
+            attributeName="x"
+            from="-96" to="128"
+            dur="3.6s" repeatCount="indefinite" />
+        </rect>
+      </g>
+      <path
+        d="M32 6 C38 14, 46 22, 50 31 C54 40, 48 54, 32 58 C16 54, 10 40, 14 31 C18 22, 26 14, 32 6 Z"
+        fill="none"
+        stroke="#fff"
+        strokeOpacity=".7"
+      />
+    </svg>
+  </motion.div>
 );
 
 /** Light steps */
@@ -203,8 +230,9 @@ const LightStep = ({
   </div>
 );
 
+/** Slim connector (only on desktop) */
 const StepConnector = () => (
-  <div className="hidden md:flex items-center justify-center">
+  <div className="hidden md:flex items-center">
     <span className="inline-block h-[2px] w-12 rounded-full bg-[linear-gradient(90deg,#f6d37a,#f38fb4)] opacity-80" />
   </div>
 );
@@ -262,7 +290,7 @@ export default function App() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-6 py-6">
           <div className="flex items-center gap-3">
             <AureliaLogo />
-            <span className="font-sans text-2xl tracking-[.02em]">Aurelia</span>
+            <span className="font-sans text-2xl tracking-[.02em] text-zinc-800">Aurelia</span>
           </div>
 
           <div className="flex items-center gap-4">
@@ -296,9 +324,9 @@ export default function App() {
       <section className="relative z-10 mx-auto max-w-7xl px-6 pt-8 pb-20 md:pt-16 md:pb-28">
         <div className="grid items-start gap-10 md:grid-cols-2">
           {/* Left: copy + form */}
-          <div className="relative max-w-4xl">
-            {/* TITLE — black, lighter, single line on md+ */}
-            <h1 className="font-sans text-black font-semibold text-[32px] sm:text-[40px] md:text-[52px] xl:text-[60px] leading-[1.05] tracking-tight md:whitespace-nowrap">
+          <div className="relative w-full md:max-w-2xl">
+            {/* TITLE — black, lighter, one line on md+ */}
+            <h1 className="font-sans text-black font-semibold text-[30px] sm:text-[38px] md:text-[50px] xl:text-[56px] leading-[1.05] tracking-tight md:whitespace-nowrap">
               {copy.heroLead}
               <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#e7c873,#f1b2c6,#cfe9ff,#c9d494)]">
                 {copy.heroSpan}
@@ -307,7 +335,7 @@ export default function App() {
             </h1>
 
             {/* DESCRIPTION — black, smaller, rotating keyword (translates) */}
-            <p className="mt-4 font-sans text-black sm:text-base md:text-lg">
+            <p className="mt-4 font-sans text-black sm:text-[15px] md:text-[17px]">
               {copy.descA}
               <span className="font-semibold text-black">{copy.ai}</span>
               {copy.descB}
@@ -361,9 +389,9 @@ export default function App() {
               </div>
             </div>
 
-            {/* Steps (light look) */}
+            {/* Steps (flex layout so it never overflows) */}
             <div aria-label="How it works" className="mt-8">
-              <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
+              <div className="flex flex-col md:flex-row items-stretch gap-6 md:gap-5">
                 <LightStep
                   no="1"
                   icon={<ClipboardList className="h-5 w-5 text-rose-600" />}
@@ -394,7 +422,7 @@ export default function App() {
             <div className="relative rounded-[2rem] p-[1px] bg-[linear-gradient(140deg,rgba(255,255,255,.95),rgba(255,255,255,.65))] shadow-[0_30px_120px_rgba(0,0,0,0.15)]">
               <div className="overflow-hidden rounded-[1.92rem] bg-white/90 backdrop-blur-xl ring-1 ring-zinc-200">
                 <div className="relative aspect-square">
-                  {/* ✂️ AI badge removed */}
+                  {/* AI badge removed */}
                   <video
                     className="absolute inset-0 h-full w-full object-cover"
                     autoPlay
