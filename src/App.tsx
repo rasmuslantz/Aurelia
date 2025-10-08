@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Sparkles, ClipboardList, Wand2, Gem } from "lucide-react";
@@ -20,33 +21,28 @@ const getInitialLang = (): Lang => {
   return nav.toLowerCase().startsWith("es") ? "es" : "en";
 };
 
-/** Copy — description pieces for EN/ES */
+/** Copy — EN/ES */
 const COPY: Record<Lang, any> = {
   en: {
     tagline: "Jewelry made for you — with AI",
     heroLead: "Jewelry ",
     heroSpan: "made for you",
     heroDot: ".",
-
-    // description like the reference image
     descA: "Tell us a little about you. Our ",
     ai: "AI",
     descB:
       " learns what flatters you and picks the piece that feels like you — matched to your ",
-
     emailLabel: "Email address",
     emailPlaceholder: "Your email",
     notify: "Notify me",
     joining: "Joining…",
     subscribeIdle: "One email at launch. No spam.",
-
     step1Title: "Quick quiz",
     step1Desc: "A few taps to capture your taste.",
     step2Title: "AI match",
     step2Desc: "We analyze and curate a tight capsule.",
     step3Title: "Your piece",
     step3Desc: "See the piece that feels like you.",
-
     en: "EN",
     es: "ES",
     footerLine: "Privacy-first · Ethical sourcing",
@@ -59,25 +55,21 @@ const COPY: Record<Lang, any> = {
     heroLead: "Joyería ",
     heroSpan: "hecha para ti",
     heroDot: ".",
-
     descA: "Cuéntanos un poco sobre ti. Nuestra ",
     ai: "IA",
     descB:
       " aprende lo que te favorece y elige la pieza que se siente como tú — alineada con tu ",
-
     emailLabel: "Correo electrónico",
     emailPlaceholder: "Tu email",
     notify: "Avísame",
     joining: "Uniéndome…",
     subscribeIdle: "Un solo email al lanzamiento. Sin spam.",
-
     step1Title: "Mini test",
     step1Desc: "Unos toques para captar tu gusto.",
     step2Title: "Coincidencia con IA",
     step2Desc: "Analizamos y curamos una cápsula precisa.",
     step3Title: "Tu pieza",
     step3Desc: "Descubre la pieza que se siente como tú.",
-
     en: "EN",
     es: "ES",
     footerLine: "Privacidad primero · Abastecimiento ético",
@@ -126,7 +118,9 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
   const [del, setDel] = useState(false);
 
   useEffect(() => {
-    setI(0); setSub(0); setDel(false);
+    setI(0);
+    setSub(0);
+    setDel(false);
   }, [lang]);
 
   useEffect(() => {
@@ -136,7 +130,8 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
       return () => clearTimeout(hold);
     }
     if (del && sub === 0) {
-      setDel(false); setI((i + 1) % traits.length);
+      setDel(false);
+      setI((i + 1) % traits.length);
       return;
     }
     const t = setTimeout(() => setSub(sub + (del ? -1 : 1)), del ? 45 : 70);
@@ -192,10 +187,7 @@ const AureliaLogo = () => (
       <g clipPath="url(#au-shape)">
         <rect width="64" height="64" fill="url(#au-drop)" />
         <rect x="-96" y="0" width="96" height="64" fill="url(#au-gloss)">
-          <animate
-            attributeName="x"
-            from="-96" to="128"
-            dur="3.6s" repeatCount="indefinite" />
+          <animate attributeName="x" from="-96" to="128" dur="3.6s" repeatCount="indefinite" />
         </rect>
       </g>
       <path
@@ -208,33 +200,42 @@ const AureliaLogo = () => (
   </motion.div>
 );
 
-/** Light steps */
-const LightStep = ({
-  no, icon, title, desc,
-}: { no: string; icon: React.ReactNode; title: string; desc: string }) => (
-  <div className="relative rounded-2xl p-5 ring-1 ring-rose-200/70 bg-white/75 backdrop-blur-xl shadow-[0_8px_40px_rgba(223,164,198,0.12)]">
-    <div className="flex items-start gap-3">
-      <div className="relative shrink-0">
-        <div className="grid h-12 w-12 place-items-center rounded-full ring-1 ring-rose-200/70 bg-[radial-gradient(75%_75%_at_30%_30%,#ffe3ea_0%,#fff6e0_35%,transparent_60%)]">
-          {icon}
+/** Clean, responsive step card */
+const StepCard = ({
+  no,
+  icon,
+  title,
+  desc,
+  showConnector = false,
+}: {
+  no: string;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  showConnector?: boolean;
+}) => (
+  <li className="relative">
+    {showConnector && (
+      <span
+        aria-hidden
+        className="hidden xl:block absolute top-1/2 -right-6 h-[2px] w-12 -translate-y-1/2 rounded-full bg-[linear-gradient(90deg,#f6d37a,#f38fb4)]"
+      />
+    )}
+    <div className="h-full min-w-0 max-w-full rounded-2xl bg-white/80 backdrop-blur-xl ring-1 ring-rose-200/70 shadow-[0_8px_40px_rgba(223,164,198,0.12)] p-5">
+      <div className="flex items-center gap-3">
+        <div className="relative shrink-0">
+          <div className="grid h-11 w-11 place-items-center rounded-full ring-1 ring-rose-200/70 bg-[radial-gradient(75%_75%_at_30%_30%,#ffe3ea_0%,#fff6e0_35%,transparent_60%)]">
+            {icon}
+          </div>
+          <span className="absolute -top-1 -left-1 grid h-5 w-5 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-300 text-[10px] font-semibold">
+            {no}
+          </span>
         </div>
-        <span className="absolute -top-1 -left-1 grid h-5 w-5 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-300 text-[10px] font-semibold">
-          {no}
-        </span>
+        <h3 className="text-base font-semibold text-zinc-900">{title}</h3>
       </div>
-      <div className="min-w-0">
-        <div className="text-lg font-semibold text-zinc-900">{title}</div>
-        <p className="mt-1 text-sm leading-snug text-zinc-600">{desc}</p>
-      </div>
+      <p className="mt-3 text-sm leading-relaxed text-zinc-700">{desc}</p>
     </div>
-  </div>
-);
-
-/** Slim connector (only on desktop) */
-const StepConnector = () => (
-  <div className="hidden md:flex items-center">
-    <span className="inline-block h-[2px] w-12 rounded-full bg-[linear-gradient(90deg,#f6d37a,#f38fb4)] opacity-80" />
-  </div>
+  </li>
 );
 
 export default function App() {
@@ -292,17 +293,15 @@ export default function App() {
             <AureliaLogo />
             <span className="font-sans text-2xl tracking-[.02em] text-zinc-800">Aurelia</span>
           </div>
-
           <div className="flex items-center gap-4">
-            <div className="hidden text-sm text-zinc-600 md:block">
-              {copy.tagline}
-            </div>
-            {/* Language picker */}
+            <div className="hidden text-sm text-zinc-600 md:block">{copy.tagline}</div>
             <div className="inline-flex overflow-hidden rounded-full ring-1 ring-zinc-200 bg-white/70 backdrop-blur">
               <button
                 type="button"
                 onClick={() => setLang("en")}
-                className={`px-3 h-8 text-xs ${lang === "en" ? "bg-rose-50 text-zinc-900" : "text-zinc-600 hover:text-zinc-900"}`}
+                className={`px-3 h-8 text-xs ${
+                  lang === "en" ? "bg-rose-50 text-zinc-900" : "text-zinc-600 hover:text-zinc-900"
+                }`}
                 aria-pressed={lang === "en"}
               >
                 {copy.en}
@@ -310,7 +309,9 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setLang("es")}
-                className={`px-3 h-8 text-xs ${lang === "es" ? "bg-rose-50 text-zinc-900" : "text-zinc-600 hover:text-zinc-900"}`}
+                className={`px-3 h-8 text-xs ${
+                  lang === "es" ? "bg-rose-50 text-zinc-900" : "text-zinc-600 hover:text-zinc-900"
+                }`}
                 aria-pressed={lang === "es"}
               >
                 {copy.es}
@@ -325,7 +326,7 @@ export default function App() {
         <div className="grid items-start gap-10 md:grid-cols-2">
           {/* Left: copy + form */}
           <div className="relative w-full md:max-w-2xl">
-            {/* TITLE — black, lighter, one line on md+ */}
+            {/* Title — black, lighter, single line on md+ */}
             <h1 className="font-sans text-black font-semibold text-[30px] sm:text-[38px] md:text-[50px] xl:text-[56px] leading-[1.05] tracking-tight md:whitespace-nowrap">
               {copy.heroLead}
               <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#e7c873,#f1b2c6,#cfe9ff,#c9d494)]">
@@ -334,7 +335,7 @@ export default function App() {
               {copy.heroDot}
             </h1>
 
-            {/* DESCRIPTION — black, smaller, rotating keyword (translates) */}
+            {/* Description — black, smaller, rotating keyword */}
             <p className="mt-4 font-sans text-black sm:text-[15px] md:text-[17px]">
               {copy.descA}
               <span className="font-semibold text-black">{copy.ai}</span>
@@ -389,30 +390,30 @@ export default function App() {
               </div>
             </div>
 
-            {/* Steps (flex layout so it never overflows) */}
+            {/* How it works – clear & responsive (no overflow) */}
             <div aria-label="How it works" className="mt-8">
-              <div className="flex flex-col md:flex-row items-stretch gap-6 md:gap-5">
-                <LightStep
+              <ol className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                <StepCard
                   no="1"
                   icon={<ClipboardList className="h-5 w-5 text-rose-600" />}
                   title={copy.step1Title}
                   desc={copy.step1Desc}
+                  showConnector
                 />
-                <StepConnector />
-                <LightStep
+                <StepCard
                   no="2"
                   icon={<Wand2 className="h-5 w-5 text-rose-600" />}
                   title={copy.step2Title}
                   desc={copy.step2Desc}
+                  showConnector
                 />
-                <StepConnector />
-                <LightStep
+                <StepCard
                   no="3"
                   icon={<Gem className="h-5 w-5 text-rose-600" />}
                   title={copy.step3Title}
                   desc={copy.step3Desc}
                 />
-              </div>
+              </ol>
             </div>
           </div>
 
@@ -422,7 +423,6 @@ export default function App() {
             <div className="relative rounded-[2rem] p-[1px] bg-[linear-gradient(140deg,rgba(255,255,255,.95),rgba(255,255,255,.65))] shadow-[0_30px_120px_rgba(0,0,0,0.15)]">
               <div className="overflow-hidden rounded-[1.92rem] bg-white/90 backdrop-blur-xl ring-1 ring-zinc-200">
                 <div className="relative aspect-square">
-                  {/* AI badge removed */}
                   <video
                     className="absolute inset-0 h-full w-full object-cover"
                     autoPlay
