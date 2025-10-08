@@ -406,22 +406,20 @@ export default function App() {
             {/* Left: copy + form */}
             <div className="relative max-w-3xl">
               <Sheen />
-              <h1 className="text-4xl md:text-6xl leading-tight font-serif [font-family:'Cormorant_Garamond',ui-serif,Georgia,serif] text-zinc-900">
-                {copy.heroLead}
-                <ShimmerText>{copy.heroSpan}</ShimmerText>
-                {copy.heroDot}
-              </h1>
+                <h1 className="font-sans text-4xl md:text-6xl font-extrabold leading-tight tracking-tight">
+                  {copy.heroLead}
+                  <ShimmerText>{copy.heroSpan}</ShimmerText>
+                  {copy.heroDot}
+                </h1>
 
-              {/* Description with trailing typewriter traits (kept on same line) */}
-              <p className="mt-4 descSize sm:text-lg md:text-xl text-zinc-800 [font-family:'Inter',ui-sans-serif,system-ui]">
-                {copy.desc1}
-                <span className="font-semibold">{copy.ai}</span>
-                {copy.desc2}
-                <span className="nowrapTail">
-                  {"\u00A0"}
-                  <TypeTrait key={lang} lang={lang} />
-                </span>
-              </p>
+                <p className="mt-4 font-sans text-zinc-800 sm:text-lg md:text-xl">
+                  {copy.descA}
+                  <span className="font-semibold text-zinc-900">{copy.ai}</span>
+                  {copy.descB}
+                  <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#9BB8FF,#B7A9FF,#CFE3A2)]">
+                    {copy.trait}
+                  </span>
+                </p>
 
               {/* Signup */}
               <div className="mt-8 relative">
