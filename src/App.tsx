@@ -28,7 +28,7 @@ const COPY: Record<Lang, any> = {
     heroSpan: "made for you",
     heroDot: ".",
 
-    // description like the second screenshot
+    // description like the screenshot
     descA: "Tell us a little about you. Our ",
     ai: "AI",
     descB:
@@ -60,7 +60,6 @@ const COPY: Record<Lang, any> = {
     heroSpan: "hecha para ti",
     heroDot: ".",
 
-    // traducción 1:1 del copy con palabra variable al final
     descA: "Cuéntanos un poco sobre ti. Nuestra ",
     ai: "IA",
     descB:
@@ -165,7 +164,7 @@ const TypeTrait = ({ lang }: { lang: Lang }) => {
         <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#9BB8FF,#B7A9FF,#CFE3A2)]">
           {traits[i].substring(0, sub)}
         </span>
-        <span className={`ml-[1px] inline-block w-[1ch] text-zinc-400 ${blink ? "opacity-60" : "opacity-0"}`}>
+        <span className="ml-[1px] inline-block w-[1ch] text-zinc-400">
           |
         </span>
       </span>
@@ -182,7 +181,7 @@ const AureliaLogo = () => (
   />
 );
 
-/** Light steps (unchanged) */
+/** Light steps */
 const LightStep = ({
   no, icon, title, desc,
 }: { no: string; icon: React.ReactNode; title: string; desc: string }) => (
@@ -298,8 +297,8 @@ export default function App() {
         <div className="grid items-start gap-10 md:grid-cols-2">
           {/* Left: copy + form */}
           <div className="relative max-w-4xl">
-            {/* TITLE — one line on md+ and lighter weight */}
-            <h1 className="font-sans font-bold text-[38px] sm:text-[44px] md:text-[64px] leading-[1.05] tracking-tight md:whitespace-nowrap">
+            {/* TITLE — black, lighter, single line on md+ */}
+            <h1 className="font-sans text-black font-semibold text-[32px] sm:text-[40px] md:text-[52px] xl:text-[60px] leading-[1.05] tracking-tight md:whitespace-nowrap">
               {copy.heroLead}
               <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#e7c873,#f1b2c6,#cfe9ff,#c9d494)]">
                 {copy.heroSpan}
@@ -307,10 +306,10 @@ export default function App() {
               {copy.heroDot}
             </h1>
 
-            {/* DESCRIPTION — same sentence, rotating keyword, EN/ES */}
-            <p className="mt-4 font-sans text-zinc-800 sm:text-lg md:text-xl">
+            {/* DESCRIPTION — black, smaller, rotating keyword (translates) */}
+            <p className="mt-4 font-sans text-black sm:text-base md:text-lg">
               {copy.descA}
-              <span className="font-semibold text-zinc-900">{copy.ai}</span>
+              <span className="font-semibold text-black">{copy.ai}</span>
               {copy.descB}
               <TypeTrait lang={lang} />
             </p>
@@ -389,15 +388,13 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right media card — keep your existing */}
+          {/* Right media card — AI badge removed */}
           <div className="relative">
             <div className="absolute -inset-6 rounded-[2rem] blur-2xl bg-[radial-gradient(60%_60%_at_30%_20%,rgba(231,200,115,0.28),transparent_60%),radial-gradient(50%_50%_at_70%_80%,rgba(246,220,229,0.28),transparent_60%)]" />
             <div className="relative rounded-[2rem] p-[1px] bg-[linear-gradient(140deg,rgba(255,255,255,.95),rgba(255,255,255,.65))] shadow-[0_30px_120px_rgba(0,0,0,0.15)]">
               <div className="overflow-hidden rounded-[1.92rem] bg-white/90 backdrop-blur-xl ring-1 ring-zinc-200">
                 <div className="relative aspect-square">
-                  <div className="absolute left-3 top-3 z-10 rounded-full px-2 py-1 text-[10px] tracking-wide bg-white/80 ring-1 ring-zinc-200 text-zinc-600">
-                    AI
-                  </div>
+                  {/* ✂️ AI badge removed */}
                   <video
                     className="absolute inset-0 h-full w-full object-cover"
                     autoPlay
@@ -409,13 +406,14 @@ export default function App() {
                     <source src="/hero-square.webm" type="video/webm" />
                     <source src="/hero-square.mp4" type="video/mp4" />
                   </video>
-                  <div className="pointer-events-none absolute inset-0 opacity-40 mix-blend-soft-light"
-                       style={{
-                         backgroundImage:
-                           "radial-gradient(60% 40% at 20% 30%, rgba(255,255,255,0.5), transparent 60%), radial-gradient(50% 35% at 80% 70%, rgba(197,162,74,0.35), transparent 60%)",
-                         backgroundSize: "160% 160%, 140% 140%",
-                         animation: "causticFlow 12s ease-in-out infinite"
-                       } as React.CSSProperties}
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-40 mix-blend-soft-light"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(60% 40% at 20% 30%, rgba(255,255,255,0.5), transparent 60%), radial-gradient(50% 35% at 80% 70%, rgba(197,162,74,0.35), transparent 60%)",
+                      backgroundSize: "160% 160%, 140% 140%",
+                      animation: "causticFlow 12s ease-in-out infinite",
+                    } as React.CSSProperties}
                   />
                 </div>
               </div>
