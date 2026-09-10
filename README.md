@@ -6,6 +6,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-typed%20UI-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-06B6D4?logo=tailwindcss&logoColor=white)
+[![Product notes](https://img.shields.io/badge/docs-product%20notes-181717)](PRODUCT_NOTES.md)
 
 ## The idea
 
@@ -71,3 +72,5 @@ Output directory: dist
 **Prototype / concept project.**
 
 The original exploration is preserved as part of my product-development portfolio. It is not currently one of my actively developed products.
+
+[Read the product notes](PRODUCT_NOTES.md)
